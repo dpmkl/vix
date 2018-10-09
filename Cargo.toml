@@ -1,0 +1,10 @@
+[package]
+name = "xim"
+version = "0.1.0"
+authors = ["Michael E. Craggs <m.e.craggs@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+futures = "0.1"
+tokio = "0.1"
+termion = "1.5"
