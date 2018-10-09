@@ -8,3 +8,4 @@ edition = "2018"
 futures = "0.1"
 tokio = "0.1"
 termion = "1.5"
+xrl = { git = "https://github.com/xi-frontend/xrl" }
