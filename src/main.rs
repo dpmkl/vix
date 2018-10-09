@@ -1,3 +1,4 @@
+mod command_prompt;
 mod tty;
 
 fn main() {

@@ -101,14 +101,10 @@ impl Stream for Tty {
             Err(()) => return Err(()),
         }
         match self.stdin.poll() {
-            Ok(Async::Ready(Some(event))) => {
-                return Ok(Async::Ready(Some(TtyEvent::Input(event))))
-            }
-            Ok(Async::Ready(None)) => {
-                return Ok(Async::Ready(None))
-            }
+            Ok(Async::Ready(Some(event))) => return Ok(Async::Ready(Some(TtyEvent::Input(event)))),
+            Ok(Async::Ready(None)) => return Ok(Async::Ready(None)),
             Ok(Async::NotReady) => {}
-            Err(()) => return Err(())
+            Err(()) => return Err(()),
         }
         Ok(Async::NotReady)
     }
