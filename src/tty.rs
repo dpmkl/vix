@@ -45,7 +45,7 @@ impl Tty {
                         let _ = tx.start_send(event).unwrap();
                         let _ = tx.poll_complete().unwrap();
                     }
-                    Err(err) => println!("{}", err),
+                    Err(err) => error!("failed to read tty event:  {}", err),
                 }
             }
         });
@@ -54,20 +54,20 @@ impl Tty {
         let mut tx = tx;
         spawn(move || {
             let mut current_size = (0, 0);
-            //info!("waiting for resize events");
+            info!("waiting for resize events");
             loop {
                 match terminal_size() {
                     Ok(new_size) => if new_size != current_size {
-                        // info!(
-                        //     "terminal resized (from {:?} to {:?})",
-                        //     current_size, new_size
-                        // );
+                        info!(
+                            "terminal resized (from {:?} to {:?})",
+                            current_size, new_size
+                        );
                         current_size = new_size;
                         let _ = tx.start_send(current_size).unwrap();
                         let _ = tx.poll_complete().unwrap();
                     },
                     Err(e) => {
-                        println!("failed to get terminal size: {}", e);
+                        error!("failed to get terminal size: {}", e);
                     }
                 }
                 sleep(Duration::from_millis(10));
