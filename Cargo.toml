@@ -6,6 +6,10 @@ edition = "2018"
 
 [dependencies]
 futures = "0.1"
+slog = "2.3"
+slog-async = "2.3"
+slog-scope = "4.0"
+slog-term = "2.4"
 tokio = "0.1"
 termion = "1.5"
 xrl = { git = "https://github.com/xi-frontend/xrl" }
