@@ -1,11 +1,14 @@
 mod client;
 mod command_prompt;
+mod editor;
 mod tty;
+mod tui;
+mod view;
+mod window;
 
 use slog::Drain;
 use slog_scope::GlobalLoggerGuard;
 use std::fs::OpenOptions;
-use std::net::SocketAddr;
 
 #[macro_use]
 extern crate slog;
