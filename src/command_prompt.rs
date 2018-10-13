@@ -19,6 +19,7 @@ pub enum Command {
 
 #[derive(Debug)]
 pub enum ParseCommandError {
+    /*
     UnexpectedArgument,
     ExpectedArgument {
         cmd: String,
@@ -29,7 +30,7 @@ pub enum ParseCommandError {
         cmd: String,
         expected: usize,
         found: usize,
-    },
+    },*/
     UnknownCommand(String),
 }
 

@@ -10,7 +10,6 @@ mod xim;
 use futures::{Future, Stream};
 use slog::{Drain, Level, LevelFilter};
 use slog_scope::GlobalLoggerGuard;
-use std::env;
 use std::fs::OpenOptions;
 use xrl;
 
