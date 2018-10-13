@@ -66,12 +66,23 @@ impl Xim {
     pub fn handle_cmd(&mut self, cmd: Command) {
         self.mode = Mode::Xim;
         match cmd {
+            Command::Quit => {
+                info!("exiting ...");
+                self.exit();
+            }
             Command::Cancel => {
                 self.prompt = None;
             }
-            Command::Quit => self.exit(),
-            Command::Save(view) => self.editor.save(view),
-            Command::Open(file) => self.editor.open(file),
+            Command::Save(view, exit) => {
+                self.editor.save(view);
+                if exit {
+                    self.exit();
+                }
+            }
+            Command::Open(file) => {
+                self.editor.open(file);
+            }
+            Command::Search(search) => {}
             // Command::SetTheme(theme) => self.editor.set_theme(&theme),
             // Command::NextBuffer => self.editor.next_buffer(),
             // Command::PrevBuffer => self.editor.prev_buffer()
@@ -247,7 +258,7 @@ impl Frontend for XimService {
         Box::new(future::ok(()))
     }
 
-    fn update_cmds(&mut self, _updateCmds: UpdateCmds) -> ServerResult<()> {
+    fn update_cmds(&mut self, _update_cmds: UpdateCmds) -> ServerResult<()> {
         warn!("UpateCmds not implemented");
         Box::new(future::ok(()))
     }

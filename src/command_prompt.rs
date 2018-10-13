@@ -7,9 +7,10 @@ use xrl::ViewId;
 
 #[derive(Debug)]
 pub enum Command {
+    Search(String),
     Cancel,
     Quit,
-    Save(Option<ViewId>),
+    Save(Option<ViewId>, bool),
     Open(Option<String>),
     //SetSyntax(String),
 }
@@ -35,7 +36,11 @@ impl FromStr for Command {
 
     fn from_str(s: &str) -> Result<Command, Self::Err> {
         match &s[..] {
-            "w" | "write" => Ok(Command::Save(None)),
+            // FIXME: Unsure how tow handle the ! operator here
+            "w" | "write" => Ok(Command::Save(None, false)),
+            "q" | "quit" => Ok(Command::Quit),
+            // FIXME: Parent future (Xim) exits before save future is complete
+            "wq" => Ok(Command::Save(None, true)),
             command => {
                 let mut parts: Vec<&str> = command.split(' ').collect();
                 let cmd = parts.remove(0);
@@ -75,7 +80,7 @@ impl CommandPrompt {
         CommandPrompt {
             chars: "".to_string(),
             index: 0,
-            input_type: InputType::Search,
+            input_type: InputType::Command,
             prefix: "(exec):".to_string(),
         }
     }
@@ -130,7 +135,10 @@ impl CommandPrompt {
     }
 
     fn finalize(&mut self) -> Result<Option<Command>, ParseCommandError> {
-        Ok(Some(FromStr::from_str(&self.chars)?))
+        match self.input_type {
+            InputType::Command => Ok(Some(FromStr::from_str(&self.chars)?)),
+            InputType::Search => Ok(Some(Command::Search(self.chars.clone()))),
+        }
     }
 
     pub fn render<W: Write>(&mut self, w: &mut W, row: u16) -> Result<(), Error> {
