@@ -2,14 +2,13 @@ use crate::client::Client;
 use crate::style::{reset_style, set_style};
 use crate::window::Window;
 use std::collections::HashMap;
-use std::fmt;
 use std::io::Write;
-use termion;
+//use termion;
 use termion::clear::CurrentLine;
-use termion::color;
+//use termion::color;
 use termion::cursor::Goto;
 use termion::event::{Event, Key, MouseButton, MouseEvent};
-use xrl::{Line, LineCache, Style, Update};
+use xrl::{ClientResult, Line, LineCache, Style, Update};
 
 const TAB_LENGTH: u16 = 4;
 
@@ -63,7 +62,7 @@ impl View {
         );
     }
 
-    pub fn save(&mut self) {
+    pub fn save(&mut self) -> ClientResult<()> {
         self.client.save(self.file.as_ref().unwrap())
     }
 
@@ -115,11 +114,12 @@ impl View {
         match event {
             Event::Key(key) => match key {
                 Key::Char(c) => self.client.insert(c),
-                Key::Ctrl(c) => match c {
-                    'w' => self.client.save(self.file.as_ref().unwrap()),
-                    'h' => self.client.backspace(),
-                    _ => error!("Unhandled input ctrl+{}", c),
-                },
+                // FIXME: avoid complexity
+                // Key::Ctrl(c) => match c {
+                //     'w' => self.client.save(self.file.as_ref().unwrap()),
+                //     'h' => self.client.backspace(),
+                //     _ => error!("Unhandled input ctrl+{}", c),
+                // },
                 Key::Backspace => self.client.backspace(),
                 Key::Delete => self.client.delete(),
                 Key::Left => self.client.left(),

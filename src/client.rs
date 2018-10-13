@@ -1,6 +1,7 @@
 use futures::Future;
 use tokio;
 use xrl;
+use xrl::ClientResult;
 
 pub struct Client {
     inner: xrl::Client,
@@ -75,10 +76,9 @@ impl Client {
         tokio::spawn(f);
     }
 
-    pub fn save(&mut self, file: &str) {
-        let f = self.inner.save(self.view_id, file).map_err(|_| ());
-        tokio::spawn(f);
-    }
+    pub fn save(&mut self, file: &str) -> ClientResult<()> {
+        self.inner.save(self.view_id, file)
+        }
 
     pub fn click(&mut self, line: u64, column: u64) {
         let f = self.inner.click(self.view_id, line, column).map_err(|_| ());

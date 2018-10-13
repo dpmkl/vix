@@ -110,12 +110,16 @@ impl Editor {
         match view {
             Some(view_id) => {
                 if let Some(view) = self.views.get_mut(&view_id) {
-                    view.save();
+                    if let Err(err) = view.save().wait() {
+                        error!("could not save view: {}", err);
+                    }
                 }
             }
             None => {
                 if let Some(view) = self.views.get_mut(&self.current_view) {
-                    view.save();
+                    if let Err(err) = view.save().wait() {
+                        error!("could not save view: {}", err);
+                    }
                 }
             }
         }
