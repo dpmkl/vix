@@ -9,7 +9,7 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
         * u16 goto line
         * ~~'w' write~~
         * '~~q' quit~~
-        * 'wq' write and quit
+        * ~~~'wq' write and quit~~~
         * 'd' delete line
         * 'v' visual mode
         * 'V' visual line mode
