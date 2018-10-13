@@ -48,12 +48,38 @@ impl FromStr for Command {
 }
 
 #[derive(Debug)]
+pub enum InputType {
+    Command,
+    Search,
+}
+
+#[derive(Debug)]
 pub struct CommandPrompt {
-    index: usize,
     chars: String,
+    index: usize,
+    input_type: InputType,
+    prefix: String,
 }
 
 impl CommandPrompt {
+    pub fn search() -> Self {
+        CommandPrompt {
+            chars: "".to_string(),
+            index: 0,
+            input_type: InputType::Search,
+            prefix: "(search):".to_string(),
+        }
+    }
+
+    pub fn execute() -> Self {
+        CommandPrompt {
+            chars: "".to_string(),
+            index: 0,
+            input_type: InputType::Search,
+            prefix: "(exec):".to_string(),
+        }
+    }
+
     pub fn handle_input(&mut self, input: &Event) -> Result<Option<Command>, ParseCommandError> {
         match input {
             Event::Key(Key::Char('\n')) => self.finalize(),
@@ -110,13 +136,14 @@ impl CommandPrompt {
     pub fn render<W: Write>(&mut self, w: &mut W, row: u16) -> Result<(), Error> {
         if let Err(err) = write!(
             w,
-            "{}{}:{}{}",
-            Goto(1, row),
+            "{}{}{}{}{}",
+            Goto(1 as u16, row),
             CurrentLine,
+            self.prefix,
             self.chars,
-            Goto(self.index as u16 + 2, row)
+            Goto(self.prefix.len() as u16 + self.index as u16 + 1, row)
         ) {
-            println!("{}", err);
+            error!("{}", err);
         }
         Ok(())
     }

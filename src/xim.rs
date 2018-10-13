@@ -18,6 +18,7 @@ pub enum CoreEvent {
     SetStyle(Style),
 }
 
+#[derive(Debug)]
 pub enum Mode {
     Xim,
     Command,
@@ -63,6 +64,7 @@ impl Xim {
     }
 
     pub fn handle_cmd(&mut self, cmd: Command) {
+        self.mode = Mode::Xim;
         match cmd {
             Command::Cancel => {
                 self.prompt = None;
@@ -77,6 +79,7 @@ impl Xim {
     }
 
     fn handle_input(&mut self, event: Event) {
+        debug!("event: {:?}@{:?}", event, self.mode);
         match event {
             Event::Key(Key::Ctrl('c')) => self.exit(),
             Event::Key(Key::Esc) => {
@@ -99,21 +102,47 @@ impl Xim {
                     Key::Char(':') => {
                         info!("entering command mode");
                         self.mode = Mode::Command;
+                        self.prompt = Some(CommandPrompt::execute());
                     }
                     Key::Char('/') => {
                         info!("entering search mode");
                         self.mode = Mode::Search;
+                        self.prompt = Some(CommandPrompt::search());
                     }
                     _ => {}
                 },
+                Mode::Command => {
+                    self.handle_command_prompt(event.clone());
+                }
                 Mode::Insert => self.editor.handle_input(event),
-                _ => {}
+                Mode::Search => {
+                    self.handle_command_prompt(event.clone());
+                }
             },
             event => {
                 if self.prompt.is_none() {
                     self.editor.handle_input(event);
                 } else {
-                    // handle command prompt
+                    self.handle_command_prompt(event.clone());
+                }
+            }
+        }
+    }
+
+    fn handle_command_prompt(&mut self, event: Event) {
+        if self.prompt.is_some() {
+            let mut prompt = self.prompt.take().unwrap();
+            match prompt.handle_input(&event) {
+                Ok(None) => {
+                    self.prompt = Some(prompt);
+                }
+                Ok(Some(cmd)) => {
+                    self.handle_cmd(cmd);
+                    self.mode = Mode::Xim;
+                }
+                Err(err) => {
+                    self.mode = Mode::Xim;
+                    error!("failed to parse cmd: {:?}", err);
                 }
             }
         }

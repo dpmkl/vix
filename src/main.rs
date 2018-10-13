@@ -8,7 +8,7 @@ mod window;
 mod xim;
 
 use futures::{Future, Stream};
-use slog::Drain;
+use slog::{Drain, Level, LevelFilter};
 use slog_scope::GlobalLoggerGuard;
 use std::env;
 use std::fs::OpenOptions;
@@ -41,7 +41,7 @@ fn setup_log(file: Option<String>) -> GlobalLoggerGuard {
             drain
         }
     };
-    let log = slog::Logger::root(drain, o!());
+    let log = slog::Logger::root(LevelFilter::new(drain, Level::Info).fuse(), o!());
     slog_scope::set_global_logger(log)
 }
 
