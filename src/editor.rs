@@ -1,7 +1,7 @@
 use crate::client::Client as ViewClient;
-use crate::tui::CoreEvent;
 use crate::view::View;
 use crate::window::Window;
+use crate::xim::CoreEvent;
 use futures::sync::mpsc::UnboundedReceiver;
 use futures::{Async, Future, Stream};
 use std::collections::HashMap;
@@ -35,6 +35,24 @@ impl Editor {
             styles,
             current_view: ViewId(0),
             client,
+        }
+    }
+}
+
+impl Editor {
+    pub fn handle_input(&mut self, event: Event) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.handle_input(event)
+        }
+    }
+
+    pub fn handle_resize(&mut self, size: (u16, u16)) {
+        info!("Setting new terminal size");
+        self.size = size;
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.resize(size.1);
+        } else {
+            warn!("View {} not found", self.current_view);
         }
     }
 }
@@ -162,8 +180,8 @@ impl Editor {
     }
 
     pub fn render<W: Write>(&mut self, term: &mut W)
-    where
-        W: std::fmt::Write,
+    /*where
+    W: std::fmt::Write,*/
     {
         if let Some(view) = self.views.get_mut(&self.current_view) {
             view.render(term, &self.styles);

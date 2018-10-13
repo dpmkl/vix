@@ -9,10 +9,9 @@ use xrl::ViewId;
 pub enum Command {
     Cancel,
     Quit,
-    Write(Option<ViewId>),
-    WriteQuit(Option<ViewId>),
+    Save(Option<ViewId>),
     Open(Option<String>),
-    SetSyntax(String),
+    //SetSyntax(String),
 }
 
 #[derive(Debug)]
@@ -36,8 +35,7 @@ impl FromStr for Command {
 
     fn from_str(s: &str) -> Result<Command, Self::Err> {
         match &s[..] {
-            "w" | "write" => Ok(Command::Write(None)),
-            "wq" | "writequit" => Ok(Command::WriteQuit(None)),
+            "w" | "write" => Ok(Command::Save(None)),
             command => {
                 let mut parts: Vec<&str> = command.split(' ').collect();
                 let cmd = parts.remove(0);
