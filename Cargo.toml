@@ -5,6 +5,7 @@ authors = ["Michael E. Craggs <m.e.craggs@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+dirs = "1.0"
 futures = "0.1"
 slog = "2.3"
 slog-async = "2.3"
