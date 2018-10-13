@@ -18,8 +18,16 @@ pub enum CoreEvent {
     SetStyle(Style),
 }
 
+pub enum Mode {
+    Xim,
+    Command,
+    Search,
+    Insert,
+}
+
 pub struct Xim {
     editor: Editor,
+    mode: Mode,
     prompt: Option<CommandPrompt>,
     tty: Tty,
     tty_size: (u16, u16),
@@ -37,6 +45,7 @@ impl Xim {
 
         Ok(Xim {
             editor: Editor::new(client, events),
+            mode: Mode::Xim,
             prompt: None,
             tty: Tty::new()?,
             tty_size: (0, 0),
@@ -70,8 +79,36 @@ impl Xim {
     fn handle_input(&mut self, event: Event) {
         match event {
             Event::Key(Key::Ctrl('c')) => self.exit(),
-            Event::Key(Key::Char(':')) => { /* command prompt */ }
-            Event::Key(Key::Char('/')) => { /* search prompt */ }
+            Event::Key(Key::Esc) => {
+                info!("entering xim mode");
+                self.mode = Mode::Xim;
+            }
+            Event::Key(key) => match self.mode {
+                Mode::Xim => match key {
+                    Key::Delete
+                    | Key::Left
+                    | Key::Right
+                    | Key::Up
+                    | Key::Down
+                    | Key::PageUp
+                    | Key::PageDown => self.editor.handle_input(event),
+                    Key::Char('i') => {
+                        info!("entering insert mode");
+                        self.mode = Mode::Insert;
+                    }
+                    Key::Char(':') => {
+                        info!("entering command mode");
+                        self.mode = Mode::Command;
+                    }
+                    Key::Char('/') => {
+                        info!("entering search mode");
+                        self.mode = Mode::Search;
+                    }
+                    _ => {}
+                },
+                Mode::Insert => self.editor.handle_input(event),
+                _ => {}
+            },
             event => {
                 if self.prompt.is_none() {
                     self.editor.handle_input(event);

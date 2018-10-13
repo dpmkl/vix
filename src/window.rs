@@ -12,13 +12,13 @@ impl Window {
     }
 
     pub fn set_cursor(&mut self, cursor: &Cursor) {
-        info!("Setting cursor to {:?}", cursor);
+        debug!("setting cursor to {:?}", cursor);
         if cursor.line < self.start() {
             self.start = cursor.line;
         } else if cursor.line >= self.end() {
             self.start = 1 + cursor.line - u64::from(self.size);
         }
-        info!("new window: {:?}", self);
+        debug!("new window: {:?}", self);
     }
 
     pub fn resize(&mut self, height: u16) {
@@ -38,8 +38,8 @@ impl Window {
     }
 
     pub fn update(&mut self, cursor: u64, nb_line: u64) {
-        info!(
-            "Resizing window: height: {}; cursor: {}; nb_line: {}",
+        debug!(
+            "resizing window: height: {}; cursor: {}; nb_line: {}",
             self.size, cursor, nb_line
         );
 
@@ -63,6 +63,6 @@ impl Window {
         }
 
         self.start = new_start;
-        info!("Resized window: {:?}", self);
+        debug!("resized window: {:?}", self);
     }
 }

@@ -39,7 +39,7 @@ impl View {
     }
 
     pub fn update_cache(&mut self, update: Update) {
-        info!("Updating cache");
+        debug!("updating cache");
         self.cache.update(update)
     }
 
@@ -70,7 +70,7 @@ impl View {
     fn update_window(&mut self) {
         if self.cursor.line < self.cache.before() {
             error!(
-                "Cursor is on line {} but there are {} invalid lines in cache.",
+                "cursor is on line {} but there are {} invalid lines in cache.",
                 self.cursor.line,
                 self.cache.before()
             );
@@ -96,7 +96,7 @@ impl View {
             }
             return (lineno, line.text.len() as u64 + 1);
         } else {
-            warn!("No line at index {} found in cache", x);
+            warn!("no line at index {} found in cache", x);
             return (x, y);
         }
     }
@@ -130,25 +130,25 @@ impl View {
                 Key::End => self.client.end(),
                 Key::PageUp => self.client.page_up(),
                 Key::PageDown => self.client.page_down(),
-                k => error!("Unhandled key {:?}", k),
+                k => error!("unhandled key {:?}", k),
             },
             Event::Mouse(mouse_event) => match mouse_event {
                 MouseEvent::Press(press_event, y, x) => match press_event {
                     MouseButton::Left => self.click(u64::from(x) - 1, u64::from(y) - 1),
                     MouseButton::WheelUp => self.client.up(),
                     MouseButton::WheelDown => self.client.down(),
-                    button => error!("un-handled button {:?}", button),
+                    button => error!("unhandled button {:?}", button),
                 },
                 MouseEvent::Release(..) => {}
                 MouseEvent::Hold(y, x) => self.drag(u64::from(x) - 1, u64::from(y) - 1),
             },
-            ev => error!("Unhandled event {:?}", ev),
+            ev => error!("unhandled event {:?}", ev),
         }
     }
 
     fn render_lines<W: Write>(&self, w: &mut W, styles: &HashMap<u64, Style>) {
-        debug!("Rendering lines");
-        trace!("Current cache\n{:?}", self.cache);
+        debug!("rendering lines");
+        trace!("current cache\n{:?}", self.cache);
 
         let lines = self
             .cache
@@ -179,7 +179,7 @@ impl View {
     ) {
         let text = self.add_styles(styles, line);
         if let Err(e) = write!(w, "{}{}{}", Goto(1, lineno as u16 + 1), CurrentLine, &text) {
-            error!("Failed to render line: {}", e);
+            error!("failed to render line: {}", e);
         }
     }
 
@@ -190,14 +190,14 @@ impl View {
         }
         let mut style_sequences = self.get_style_sequences(styles, line);
         for style in style_sequences.drain(..) {
-            trace!("Inserting style: {:?}", style);
+            trace!("inserting style: {:?}", style);
             if style.0 >= text.len() {
                 text.push_str(&style.1);
             } else {
                 text.insert_str(style.0, &style.1);
             }
         }
-        trace!("Styled line: {:?}", text);
+        trace!("styled line: {:?}", text);
         text
     }
 
@@ -221,7 +221,7 @@ impl View {
                 let start_sequence = match set_style(style) {
                     Ok(s) => s,
                     Err(e) => {
-                        error!("Could not get CSI sequence to set style {:?}: {}", style, e);
+                        error!("could not get CSI sequence to set style {:?}: {}", style, e);
                         continue;
                     }
                 };
@@ -229,7 +229,7 @@ impl View {
                     Ok(s) => s,
                     Err(e) => {
                         error!(
-                            "Could not get CSI sequence to reset style {:?}: {}",
+                            "could not get CSI sequence to reset style {:?}: {}",
                             style, e
                         );
                         continue;
@@ -239,7 +239,7 @@ impl View {
                 style_sequences.push((end_idx, end_sequence));
             } else {
                 error!(
-                    "No style ID {} found. Not applying style.",
+                    "no style ID {} found not applying style.",
                     style_def.style_id
                 );
             };
@@ -252,11 +252,11 @@ impl View {
     }
 
     fn render_cursor<W: Write>(&self, w: &mut W) {
-        info!("rendering cursor");
+        debug!("rendering cursor");
         if self.cache.is_empty() {
-            info!("cache is empty, rendering cursor at the top left corner");
+            debug!("cache is empty, rendering cursor at the top left corner");
             if let Err(e) = write!(w, "{}", Goto(1, 1)) {
-                error!("Failed to render cursor: {}", e);
+                error!("failed to render cursor: {}", e);
             }
             return;
         }
@@ -272,14 +272,14 @@ impl View {
         let line = match self.cache.lines().get(line_idx as usize) {
             Some(line) => line,
             None => {
-                error!("No valid line at cursor index {}", self.cursor.line);
+                error!("no valid line at cursor index {}", self.cursor.line);
                 return;
             }
         };
 
         if line_idx < self.window.start() {
             error!(
-                "The line that has the cursor (nb={}, cache_idx={}) not within the displayed window ({:?})",
+                "the line that has the cursor (nb={}, cache_idx={}) not within the displayed window ({:?})",
                 self.cursor.line,
                 line_idx,
                 self.window
@@ -296,9 +296,9 @@ impl View {
 
         let cursor_pos = Goto(column as u16 + 1, line_pos as u16 + 1);
         if let Err(e) = write!(w, "{}", cursor_pos) {
-            error!("Failed to render cursor: {}", e);
+            error!("failed to render cursor: {}", e);
         }
-        info!("Cursor rendered at ({}, {})", line_pos, column);
+        debug!("cursor rendered at ({}, {})", line_pos, column);
     }
 }
 
