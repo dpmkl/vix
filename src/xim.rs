@@ -83,6 +83,7 @@ impl Xim {
                 self.editor.open(file);
             }
             Command::Search(search) => {}
+            Command::GotoLine(line) => {}
             // Command::SetTheme(theme) => self.editor.set_theme(&theme),
             // Command::NextBuffer => self.editor.next_buffer(),
             // Command::PrevBuffer => self.editor.prev_buffer()

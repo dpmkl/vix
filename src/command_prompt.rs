@@ -1,4 +1,5 @@
 use std::io::{Error, Write};
+use std::str;
 use std::str::FromStr;
 use termion::clear::CurrentLine;
 use termion::cursor::Goto;
@@ -11,6 +12,7 @@ pub enum Command {
     Cancel,
     Quit,
     Save(Option<ViewId>, bool),
+    GotoLine(u16),
     Open(Option<String>),
     //SetSyntax(String),
 }
@@ -35,17 +37,22 @@ impl FromStr for Command {
     type Err = ParseCommandError;
 
     fn from_str(s: &str) -> Result<Command, Self::Err> {
-        match &s[..] {
-            // FIXME: Unsure how tow handle the ! operator here
-            "w" | "write" => Ok(Command::Save(None, false)),
-            "q" | "quit" => Ok(Command::Quit),
-            // FIXME: Parent future (Xim) exits before save future is complete
-            "wq" => Ok(Command::Save(None, true)),
-            command => {
-                let mut parts: Vec<&str> = command.split(' ').collect();
-                let cmd = parts.remove(0);
-                match cmd {
-                    _ => Err(ParseCommandError::UnknownCommand(command.into())),
+        let num = s.to_owned();
+        if let Ok(idx) = num.parse::<u16>() {
+            Ok(Command::GotoLine(idx))
+        } else {
+            match &s[..] {
+                // FIXME: Unsure how tow handle the ! operator here
+                "w" | "write" => Ok(Command::Save(None, false)),
+                "q" | "quit" => Ok(Command::Quit),
+                // FIXME: Parent future (Xim) exits before save future is complete
+                "wq" => Ok(Command::Save(None, true)),
+                command => {
+                    let mut parts: Vec<&str> = command.split(' ').collect();
+                    let cmd = parts.remove(0);
+                    match cmd {
+                        _ => Err(ParseCommandError::UnknownCommand(command.into())),
+                    }
                 }
             }
         }
