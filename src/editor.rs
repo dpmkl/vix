@@ -10,6 +10,7 @@ use tokio;
 use xrl::{Client, ClientResult, ScrollTo, Style, Update, ViewId};
 
 pub struct Editor {
+    clipboard: String, // FIXME: Replace this with something better
     pub pending_open_requests: Vec<ClientResult<(ViewId, View)>>,
     pub delayed_events: Vec<CoreEvent>,
     pub views: HashMap<ViewId, View>,
@@ -26,6 +27,7 @@ impl Editor {
         styles.insert(0, Default::default());
 
         Editor {
+            clipboard: String::default(),
             events,
             delayed_events: Vec::new(),
             pending_open_requests: Vec::new(),
@@ -100,6 +102,46 @@ impl Editor {
         self.pending_open_requests.push(Box::new(task));
     }
 
+    pub fn paste(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.paste(&self.clipboard);
+        }
+    }
+
+    pub fn copy(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            match view.copy().wait() {
+                Ok(value) => {
+                    self.clipboard = match value.as_str() {
+                        Some(value) => String::from(value),
+                        None => {
+                            error!("could not copy clipboard");
+                            String::default()
+                        }
+                    };
+                }
+                Err(err) => error!("error copying: {}", err),
+            }
+        }
+    }
+
+    pub fn cut(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            match view.cut().wait() {
+                Ok(value) => {
+                    self.clipboard = match value.as_str() {
+                        Some(value) => String::from(value),
+                        None => {
+                            error!("could not copy clipboard");
+                            String::default()
+                        }
+                    };
+                }
+                Err(err) => error!("error copying: {}", err),
+            }
+        }
+    }
+
     pub fn set_theme(&mut self, theme: &str) {
         let future = self.client.set_theme(theme).map_err(|_| ());
         tokio::run(future);
@@ -112,7 +154,7 @@ impl Editor {
     }
 
     pub fn select_down(&mut self) {
-        if let Some(_) = self.views.get_mut(&self.current_view) {
+        if self.views.contains_key(&self.current_view) {
             self.client.down_sel(self.current_view);
         }
     }

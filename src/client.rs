@@ -1,4 +1,5 @@
 use futures::Future;
+use serde_json::Value;
 use tokio;
 use xrl;
 use xrl::ClientResult;
@@ -29,6 +30,19 @@ impl Client {
     pub fn goto_line(&mut self, line: u64) {
         let f = self.inner.goto_line(self.view_id, line).map_err(|_| ());
         tokio::spawn(f);
+    }
+
+    pub fn copy(&mut self) -> ClientResult<Value> {
+        self.inner.copy(self.view_id)
+    }
+
+    pub fn paste(&mut self, buffer: &str) {
+        let f = self.inner.paste(self.view_id, buffer).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn cut(&mut self) -> ClientResult<Value> {
+        self.inner.cut(self.view_id)
     }
 
     pub fn down(&mut self) {

@@ -112,6 +112,18 @@ impl Xim {
                 }
                 Mode::Visual => match key {
                     Key::Char('i') => self.mode = Mode::Insert,
+                    Key::Char('p') => {
+                        self.editor.paste();
+                        self.mode = Mode::Xim
+                    }
+                    Key::Char('y') => {
+                        self.editor.copy();
+                        self.mode = Mode::Xim
+                    }
+                    Key::Char('d') => {
+                        self.editor.cut();
+                        self.mode = Mode::Xim
+                    }
                     Key::Left => self.editor.select_left(),
                     Key::Right => self.editor.select_right(),
                     Key::Down => self.editor.select_down(),
@@ -145,6 +157,12 @@ impl Xim {
                     Key::Char('v') => {
                         info!("entering visual mode");
                         self.mode = Mode::Visual;
+                    }
+                    Key::Char('p') => {
+                        self.editor.paste();
+                    }
+                    Key::Char('y') => {
+                        self.editor.copy();
                     }
                     _ => {}
                 },

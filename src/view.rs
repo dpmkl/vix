@@ -1,6 +1,7 @@
 use crate::client::Client;
 use crate::style::{reset_style, set_style};
 use crate::window::Window;
+use serde_json::Value;
 use std::collections::HashMap;
 use std::io::Write;
 //use termion;
@@ -66,6 +67,18 @@ impl View {
 
     pub fn goto_line(&mut self, line: u64) {
         self.client.goto_line(line)
+    }
+
+    pub fn copy(&mut self) -> ClientResult<Value> {
+        self.client.copy()
+    }
+
+    pub fn paste(&mut self, buffer: &str) {
+        self.client.paste(buffer);
+    }
+
+    pub fn cut(&mut self) -> ClientResult<Value> {
+        self.client.cut()
     }
 
     pub fn save(&mut self) -> ClientResult<()> {
