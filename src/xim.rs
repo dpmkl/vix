@@ -140,6 +140,8 @@ impl Xim {
                     | Key::Right
                     | Key::Up
                     | Key::Down
+                    | Key::Home
+                    | Key::End
                     | Key::PageUp
                     | Key::PageDown => self.editor.handle_input(event),
                     Key::Char('i') => {
