@@ -6,10 +6,10 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
  * Keep it simple
  * Modal vim like behaviour
     * command mode
-        * ~~~u64 goto line~~~
+        * ~~u64 goto line~~
         * ~~'w' write~~
-        * '~~q' quit~~
-        * ~~~'wq' write and quit~~~
+        * ~~'q' quit~~
+        * ~~'wq' write and quit~~
         * 'd' delete line
         * 'v' visual mode
         * 'V' visual line mode
@@ -18,6 +18,9 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
     * search/replace mode
         * search
         * replace
+    * status bar
+        * ~~file name~~
+        * ~~cursor pos~~
  * Syntax highlighting
  * LSP at some point
 
