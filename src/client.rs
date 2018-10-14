@@ -45,6 +45,16 @@ impl Client {
         self.inner.cut(self.view_id)
     }
 
+    pub fn undo(&mut self) {
+        let f = self.inner.undo(self.view_id).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn redo(&mut self) {
+        let f = self.inner.redo(self.view_id).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
     pub fn down(&mut self) {
         let f = self.inner.down(self.view_id).map_err(|_| ());
         tokio::spawn(f);

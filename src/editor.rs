@@ -142,6 +142,18 @@ impl Editor {
         }
     }
 
+    pub fn undo(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.undo();
+        }
+    }
+
+    pub fn redo(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.redo();
+        }
+    }
+
     pub fn set_theme(&mut self, theme: &str) {
         let future = self.client.set_theme(theme).map_err(|_| ());
         tokio::run(future);

@@ -13,8 +13,11 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
         * 'd' delete line
         * ~~'v' visual mode~~
             * ~~'i' switch to insert~~
-            * 'y' yank
-            * 'p' put
+        * ~~'y' copy~~
+        * ~~'p' paste~~
+        * ~~'d' cut~~
+        * ~~'u' undo~~
+        * ~~'r' redo~~
     * search/replace mode
         * search
         * replace

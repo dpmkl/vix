@@ -81,6 +81,14 @@ impl View {
         self.client.cut()
     }
 
+    pub fn undo(&mut self) {
+        self.client.undo();
+    }
+
+    pub fn redo(&mut self) {
+        self.client.redo();
+    }
+
     pub fn save(&mut self) -> ClientResult<()> {
         self.client.save(self.file.as_ref().unwrap())
     }

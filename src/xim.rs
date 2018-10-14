@@ -164,6 +164,12 @@ impl Xim {
                     Key::Char('y') => {
                         self.editor.copy();
                     }
+                    Key::Char('u') => {
+                        self.editor.undo();
+                    }
+                    Key::Char('r') => {
+                        self.editor.redo();
+                    }
                     _ => {}
                 },
                 Mode::Command => {
