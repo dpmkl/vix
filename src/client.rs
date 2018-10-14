@@ -26,6 +26,11 @@ impl Client {
         tokio::spawn(f);
     }
 
+    pub fn goto_line(&mut self, line: u64) {
+        let f = self.inner.goto_line(self.view_id, line).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
     pub fn down(&mut self) {
         let f = self.inner.down(self.view_id).map_err(|_| ());
         tokio::spawn(f);

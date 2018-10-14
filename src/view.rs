@@ -62,6 +62,10 @@ impl View {
         );
     }
 
+    pub fn goto_line(&mut self, line: u64) {
+        self.client.goto_line(line)
+    }
+
     pub fn save(&mut self) -> ClientResult<()> {
         self.client.save(self.file.as_ref().unwrap())
     }

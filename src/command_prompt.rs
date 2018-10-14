@@ -12,7 +12,7 @@ pub enum Command {
     Cancel,
     Quit,
     Save(Option<ViewId>, bool),
-    GotoLine(u16),
+    GotoLine(u64),
     Open(Option<String>),
     SetTheme(String),
 }
@@ -39,7 +39,7 @@ impl FromStr for Command {
 
     fn from_str(s: &str) -> Result<Command, Self::Err> {
         let num = s.to_owned();
-        if let Ok(idx) = num.parse::<u16>() {
+        if let Ok(idx) = num.parse::<u64>() {
             Ok(Command::GotoLine(idx))
         } else {
             match &s[..] {

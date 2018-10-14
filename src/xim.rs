@@ -86,8 +86,13 @@ impl Xim {
                 self.editor.set_theme(&theme);
             }
             Command::Search(_search) => {}
-            Command::GotoLine(_line) => {}
-
+            Command::GotoLine(line) => {
+                let line = match line {
+                    0 => 0,
+                    _ => line -1,
+                };
+                self.editor.goto_line(line);
+            }
             // Command::NextBuffer => self.editor.next_buffer(),
             // Command::PrevBuffer => self.editor.prev_buffer()
         }

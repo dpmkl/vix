@@ -6,7 +6,7 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
  * Keep it simple
  * Modal vim like behaviour
     * command mode
-        * u16 goto line
+        * ~~~u64 goto line~~~
         * ~~'w' write~~
         * '~~q' quit~~
         * ~~~'wq' write and quit~~~

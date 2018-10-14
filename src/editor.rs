@@ -105,6 +105,12 @@ impl Editor {
         tokio::run(future);
     }
 
+    pub fn goto_line(&mut self, line: u64) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.goto_line(line);
+        }
+    }
+
     pub fn save(&mut self, view: Option<ViewId>) {
         match view {
             Some(view_id) => {
