@@ -111,6 +111,42 @@ impl Editor {
         }
     }
 
+    pub fn select_down(&mut self) {
+        if let Some(_) = self.views.get_mut(&self.current_view) {
+            self.client.down_sel(self.current_view);
+        }
+    }
+
+    pub fn select_up(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.up_sel(self.current_view);
+        }
+    }
+
+    pub fn select_left(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.left_sel(self.current_view);
+        }
+    }
+
+    pub fn select_right(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.right_sel(self.current_view);
+        }
+    }
+
+    pub fn select_page_up(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.page_up_sel(self.current_view);
+        }
+    }
+
+    pub fn select_page_down(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.page_down_sel(self.current_view);
+        }
+    }
+
     pub fn save(&mut self, view: Option<ViewId>) {
         match view {
             Some(view_id) => {

@@ -25,6 +25,7 @@ pub enum Mode {
     Command,
     Search,
     Insert,
+    Visual,
 }
 
 pub struct Xim {
@@ -109,6 +110,16 @@ impl Xim {
                 Mode::Error(_msg) => {
                     self.mode = Mode::Xim;
                 }
+                Mode::Visual => match key {
+                    Key::Char('i') => self.mode = Mode::Insert,
+                    Key::Left => self.editor.select_left(),
+                    Key::Right => self.editor.select_right(),
+                    Key::Down => self.editor.select_down(),
+                    Key::Up => self.editor.select_up(),
+                    Key::PageUp => self.editor.select_page_up(),
+                    Key::PageDown => self.editor.select_page_down(),
+                    _ => {}
+                },
                 Mode::Xim => match key {
                     Key::Delete
                     | Key::Left
@@ -130,6 +141,10 @@ impl Xim {
                         info!("entering search mode");
                         self.mode = Mode::Search;
                         self.prompt = Some(CommandPrompt::search());
+                    }
+                    Key::Char('v') => {
+                        info!("entering visual mode");
+                        self.mode = Mode::Visual;
                     }
                     _ => {}
                 },
@@ -205,6 +220,7 @@ impl Xim {
             let state = match self.mode {
                 Mode::Xim => "xim",
                 Mode::Insert => "insert",
+                Mode::Visual => "visual",
                 _ => "",
             };
             self.editor.render(self.tty.stdout(), state);
