@@ -5,19 +5,28 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
 ## Goals
  * Keep it simple
  * Modal vim like behaviour
-    * command mode
-        * ~~u64 goto line~~
-        * ~~'w' write~~
-        * ~~'q' quit~~
-        * ~~'wq' write and quit~~
-        * 'd' delete line
+    * ~~'Esc' returns to xim mode~~
+    * xim mode
+        * ~~'i' insert mode~~
         * ~~'v' visual mode~~
-            * ~~'i' switch to insert~~
+        * ~~':' command mode~~
+        * ~~'/' search mode~~
         * ~~'y' copy~~
         * ~~'p' paste~~
         * ~~'d' cut~~
         * ~~'u' undo~~
         * ~~'r' redo~~
+        * 'd' delete line
+    * visual mode
+        * ~~'y' copy~~
+        * ~~'p' paste~~
+        * ~~'d' cut~~
+        * ~~'i' insert mode~~
+    * command mode
+        * ~~u64 goto line~~
+        * ~~'w' write~~
+        * ~~'q' quit~~
+        * ~~'wq' write and quit~~
     * search/replace mode
         * search
         * replace
