@@ -82,9 +82,12 @@ impl Xim {
             Command::Open(file) => {
                 self.editor.open(file);
             }
-            Command::Search(search) => {}
-            Command::GotoLine(line) => {}
-            // Command::SetTheme(theme) => self.editor.set_theme(&theme),
+            Command::SetTheme(theme) => {
+                self.editor.set_theme(&theme);
+            }
+            Command::Search(_search) => {}
+            Command::GotoLine(_line) => {}
+
             // Command::NextBuffer => self.editor.next_buffer(),
             // Command::PrevBuffer => self.editor.prev_buffer()
         }

@@ -1,6 +1,5 @@
 use crate::client::Client as ViewClient;
 use crate::view::View;
-use crate::window::Window;
 use crate::xim::CoreEvent;
 use futures::sync::mpsc::UnboundedReceiver;
 use futures::{Async, Future, Stream};
@@ -184,8 +183,6 @@ impl Editor {
     }
 
     pub fn render<W: Write>(&mut self, term: &mut W)
-    /*where
-    W: std::fmt::Write,*/
     {
         if let Some(view) = self.views.get_mut(&self.current_view) {
             view.render(term, &self.styles);

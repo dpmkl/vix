@@ -14,7 +14,7 @@ pub enum Command {
     Save(Option<ViewId>, bool),
     GotoLine(u16),
     Open(Option<String>),
-    //SetSyntax(String),
+    SetTheme(String),
 }
 
 #[derive(Debug)]
@@ -52,6 +52,19 @@ impl FromStr for Command {
                     let mut parts: Vec<&str> = command.split(' ').collect();
                     let cmd = parts.remove(0);
                     match cmd {
+                        "set" => {
+                            let sub = parts.remove(0);
+                            match sub {
+                                "theme" => {
+                                    if parts.len() > 0 {
+                                        Ok(Command::SetTheme(parts[0].to_owned()))
+                                    } else {
+                                        Ok(Command::SetTheme(String::default()))
+                                    }
+                                }
+                                _ => Err(ParseCommandError::UnknownCommand(command.into())),
+                            }
+                        }
                         _ => Err(ParseCommandError::UnknownCommand(command.into())),
                     }
                 }
