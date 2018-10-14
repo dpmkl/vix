@@ -48,8 +48,12 @@ fn main() {
     let _guard = setup_log(Some("xim.log".to_owned()));
     let mut args = Vec::new();
     args.extend(std::env::args().skip(1));
+
     if args.len() == 0 {
-        args.push("Cargo.toml".to_owned());
+        let help = "no file specified";
+        crit!("{}", help);
+        println!("{}", help);
+        return;
     }
 
     info!("Starting xi-core");
