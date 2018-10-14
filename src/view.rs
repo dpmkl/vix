@@ -55,6 +55,22 @@ impl View {
         self.render_cursor(w);
     }
 
+    pub fn render_error<W: Write>(&mut self, w: &mut W, msg: &str) {
+        let win_size = self.window.size();
+        let cur = self.window.get_cursor();
+        info!("render error");
+        write!(
+            w,
+            "{}{}{}{}{}{}",
+            Goto(1, win_size),
+            CurrentLine,
+            Bold,
+            color::Fg(color::Red),
+            msg,
+            Reset
+        );
+    }
+
     pub fn resize(&mut self, height: u16) {
         self.window.resize(height);
         self.update_window();
@@ -178,7 +194,6 @@ impl View {
 
     fn render_status<W: Write>(&mut self, w: &mut W) {
         let win_size = self.window.size();
-        //let file = self.file.as_ref().unwrap();
         let file = match self.file.as_ref().map(|s| s) {
             None => "<nofile>".to_owned(),
             Some(file) => file.to_owned(),

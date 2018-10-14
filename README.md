@@ -21,6 +21,7 @@ This project is based heavily on [xi-term](https://github.com/xi-frontend/xi-ter
     * status bar
         * ~~file name~~
         * ~~cursor pos~~
+    * ~~simple error message~~
  * Syntax highlighting
  * LSP at some point
 

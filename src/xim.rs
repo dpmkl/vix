@@ -18,9 +18,10 @@ pub enum CoreEvent {
     SetStyle(Style),
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Mode {
     Xim,
+    Error(String),
     Command,
     Search,
     Insert,
@@ -104,7 +105,10 @@ impl Xim {
                 info!("entering xim mode");
                 self.mode = Mode::Xim;
             }
-            Event::Key(key) => match self.mode {
+            Event::Key(key) => match &self.mode {
+                Mode::Error(_msg) => {
+                    self.mode = Mode::Xim;
+                }
                 Mode::Xim => match key {
                     Key::Delete
                     | Key::Left
@@ -159,7 +163,7 @@ impl Xim {
                     self.mode = Mode::Xim;
                 }
                 Err(err) => {
-                    self.mode = Mode::Xim;
+                    self.mode = Mode::Error(format!("Failed to parse cmd: '{:?}'!", err));
                     error!("failed to parse cmd: {:?}", err);
                 }
             }
@@ -199,6 +203,10 @@ impl Xim {
             prompt.render(self.tty.stdout(), self.tty_size.1)?;
         } else {
             self.editor.render(self.tty.stdout());
+            match &self.mode {
+                Mode::Error(msg) => self.editor.render_error(self.tty.stdout(), msg),
+                _ => {}
+            }
         }
         if let Err(err) = self.tty.stdout().flush() {
             error!("Failed to flush stdout: {}", err);

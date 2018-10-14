@@ -193,4 +193,10 @@ impl Editor {
             view.render(term, &self.styles);
         }
     }
+
+    pub fn render_error<W: Write>(&mut self, term: &mut W, msg: &str) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.render_error(term, msg);
+        }
+    }
 }
