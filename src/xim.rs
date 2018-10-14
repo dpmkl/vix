@@ -202,7 +202,12 @@ impl Xim {
         if let Some(ref mut prompt) = self.prompt {
             prompt.render(self.tty.stdout(), self.tty_size.1)?;
         } else {
-            self.editor.render(self.tty.stdout());
+            let state = match self.mode {
+                Mode::Xim => "xim",
+                Mode::Insert => "insert",
+                _ => "",
+            };
+            self.editor.render(self.tty.stdout(), state);
             match &self.mode {
                 Mode::Error(msg) => self.editor.render_error(self.tty.stdout(), msg),
                 _ => {}
@@ -269,7 +274,7 @@ impl Frontend for XimService {
     }
 
     fn available_plugins(&mut self, _plugins: AvailablePlugins) -> ServerResult<()> {
-        warn!("AvailablePlugins not implemented");
+        warn!("AvailablePlugins not implemented: {:?}", _plugins);
         Box::new(future::ok(()))
     }
 

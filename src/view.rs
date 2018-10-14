@@ -48,27 +48,11 @@ impl View {
         self.window.set_cursor(&self.cursor);
     }
 
-    pub fn render<W: Write>(&mut self, w: &mut W, styles: &HashMap<u64, Style>) {
+    pub fn render<W: Write>(&mut self, w: &mut W, styles: &HashMap<u64, Style>, state: &str) {
         self.update_window();
         self.render_lines(w, styles);
-        self.render_status(w);
+        self.render_status(w, state);
         self.render_cursor(w);
-    }
-
-    pub fn render_error<W: Write>(&mut self, w: &mut W, msg: &str) {
-        let win_size = self.window.size();
-        let cur = self.window.get_cursor();
-        info!("render error");
-        write!(
-            w,
-            "{}{}{}{}{}{}",
-            Goto(1, win_size),
-            CurrentLine,
-            Bold,
-            color::Fg(color::Red),
-            msg,
-            Reset
-        );
     }
 
     pub fn resize(&mut self, height: u16) {
@@ -168,6 +152,21 @@ impl View {
         }
     }
 
+    pub fn render_error<W: Write>(&mut self, w: &mut W, msg: &str) {
+        let win_size = self.window.size();
+        write!(
+            w,
+            "{}{}{}{}{}{} : {}",
+            Goto(1, win_size),
+            CurrentLine,
+            Bold,
+            color::Fg(color::Red),
+            "error",
+            Reset,
+            msg
+        );
+    }
+
     fn render_lines<W: Write>(&self, w: &mut W, styles: &HashMap<u64, Style>) {
         debug!("rendering lines");
         trace!("current cache\n{:?}", self.cache);
@@ -192,7 +191,7 @@ impl View {
         }
     }
 
-    fn render_status<W: Write>(&mut self, w: &mut W) {
+    fn render_status<W: Write>(&mut self, w: &mut W, state: &str) {
         let win_size = self.window.size();
         let file = match self.file.as_ref().map(|s| s) {
             None => "<nofile>".to_owned(),
@@ -206,7 +205,7 @@ impl View {
             CurrentLine,
             Bold,
             color::Fg(color::Green),
-            "xim",
+            state,
             Reset,
             file,
             cur.line + 1,
