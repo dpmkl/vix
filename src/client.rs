@@ -83,7 +83,7 @@ impl Client {
 
     pub fn save(&mut self, file: &str) -> ClientResult<()> {
         self.inner.save(self.view_id, file)
-        }
+    }
 
     pub fn click(&mut self, line: u64, column: u64) {
         let f = self.inner.click(self.view_id, line, column).map_err(|_| ());

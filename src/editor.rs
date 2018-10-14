@@ -188,8 +188,7 @@ impl Editor {
         }
     }
 
-    pub fn render<W: Write>(&mut self, term: &mut W)
-    {
+    pub fn render<W: Write>(&mut self, term: &mut W) {
         if let Some(view) = self.views.get_mut(&self.current_view) {
             view.render(term, &self.styles);
         }

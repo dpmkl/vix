@@ -5,14 +5,15 @@ use std::collections::HashMap;
 use std::io::Write;
 //use termion;
 use termion::clear::CurrentLine;
-//use termion::color;
+use termion::color;
 use termion::cursor::Goto;
 use termion::event::{Event, Key, MouseButton, MouseEvent};
+use termion::style::{Bold, Reset};
 use xrl::{ClientResult, Line, LineCache, Style, Update};
 
 const TAB_LENGTH: u16 = 4;
 
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone)]
 pub struct Cursor {
     pub line: u64,
     pub column: u64,
@@ -50,6 +51,7 @@ impl View {
     pub fn render<W: Write>(&mut self, w: &mut W, styles: &HashMap<u64, Style>) {
         self.update_window();
         self.render_lines(w, styles);
+        self.render_status(w);
         self.render_cursor(w);
     }
 
@@ -172,6 +174,29 @@ impl View {
                 self.render_line(w, &Line::default(), num as usize, styles);
             }
         }
+    }
+
+    fn render_status<W: Write>(&mut self, w: &mut W) {
+        let win_size = self.window.size();
+        //let file = self.file.as_ref().unwrap();
+        let file = match self.file.as_ref().map(|s| s) {
+            None => "<nofile>".to_owned(),
+            Some(file) => file.to_owned(),
+        };
+        let cur = self.window.get_cursor();
+        write!(
+            w,
+            "{}{}{}{}{}{} : '{}' {} / {}",
+            Goto(1, win_size),
+            CurrentLine,
+            Bold,
+            color::Fg(color::Green),
+            "xim",
+            Reset,
+            file,
+            cur.line + 1,
+            cur.column + 1
+        );
     }
 
     fn render_line<W: Write>(

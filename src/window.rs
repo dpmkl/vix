@@ -2,16 +2,22 @@ use crate::view::Cursor;
 
 #[derive(Clone, Debug)]
 pub struct Window {
+    cursor: Cursor,
     start: u64,
     size: u16,
 }
 
 impl Window {
     pub fn new() -> Self {
-        Window { start: 0, size: 0 }
+        Window {
+            cursor: Cursor { column: 0, line: 0 },
+            start: 0,
+            size: 0,
+        }
     }
 
     pub fn set_cursor(&mut self, cursor: &Cursor) {
+        self.cursor = cursor.clone();
         debug!("setting cursor to {:?}", cursor);
         if cursor.line < self.start() {
             self.start = cursor.line;
@@ -19,6 +25,10 @@ impl Window {
             self.start = 1 + cursor.line - u64::from(self.size);
         }
         debug!("new window: {:?}", self);
+    }
+
+    pub fn get_cursor(&mut self) -> Cursor {
+        self.cursor.clone()
     }
 
     pub fn resize(&mut self, height: u16) {

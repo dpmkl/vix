@@ -89,12 +89,10 @@ impl Xim {
             Command::GotoLine(line) => {
                 let line = match line {
                     0 => 0,
-                    _ => line -1,
+                    _ => line - 1,
                 };
                 self.editor.goto_line(line);
             }
-            // Command::NextBuffer => self.editor.next_buffer(),
-            // Command::PrevBuffer => self.editor.prev_buffer()
         }
     }
 
