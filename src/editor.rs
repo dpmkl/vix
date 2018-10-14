@@ -201,6 +201,18 @@ impl Editor {
         }
     }
 
+    pub fn select_home(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.line_start_sel(self.current_view);
+        }
+    }
+
+    pub fn select_end(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.line_end_sel(self.current_view);
+        }
+    }
+
     pub fn save(&mut self, view: Option<ViewId>) {
         match view {
             Some(view_id) => {
