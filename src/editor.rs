@@ -165,6 +165,30 @@ impl Editor {
         }
     }
 
+    pub fn down(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.down(self.current_view);
+        }
+    }
+
+    pub fn up(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.up(self.current_view);
+        }
+    }
+
+    pub fn left(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.left(self.current_view);
+        }
+    }
+
+    pub fn right(&mut self) {
+        if self.views.contains_key(&self.current_view) {
+            self.client.right(self.current_view);
+        }
+    }
+
     pub fn select_down(&mut self) {
         if self.views.contains_key(&self.current_view) {
             self.client.down_sel(self.current_view);

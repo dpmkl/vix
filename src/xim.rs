@@ -144,6 +144,9 @@ impl Xim {
                     | Key::End
                     | Key::PageUp
                     | Key::PageDown => self.editor.handle_input(event),
+                    Key::Char('j') => self.editor.down(),
+                    Key::Char('k') => self.editor.up(),
+                    Key::Char('l') => self.editor.right(),
                     Key::Char('i') => {
                         info!("entering insert mode");
                         self.mode = Mode::Insert;
