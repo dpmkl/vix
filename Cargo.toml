@@ -17,4 +17,4 @@ slog-term = "2.4"
 tokio = "0.1"
 termion = "1.5"
 xrl = { path = "../xrl" }
-#xrl = { git = "https://github.com/xi-frontend/xrl" }
+#xrl = { git = "https://github.com/k3m3/xrl" }
