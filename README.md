@@ -12,44 +12,53 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete
 depending on how it is implemented.
 
 # Status
-* xim
-    * 'Esc' returns to xim mode
-    * xim mode
-        * 'i' insert mode
-        * 'v' visual mode
-        * ':' command mode
-        * '/' search mode
-        * 'y' copy
-        * 'p' paste
-        * 'd' cut
-        * 'u' undo
-        * 'r' redo
-        * 'd' delete line
-    * visual mode
-        * 'y' copy
-        * 'p' paste
-        * 'd' cut
-        * 'i' insert mode
-    * command mode
-        * u64 goto line
-        * 'w' write
-        * 'q' quit
-        * 'wq' write and quit
-    * status bar
-        * file name
-        * cursor pos
-    *  error state with message
-
-# TODO
-* xim
-    * xim mode
-        * 'V' visual line mode
-        * 'd' delete line
-    * search/replace mode
-        * search
-        * replace
-        * highlight
-    * syntax highlighting
-    * plugin handling
+* [x] 'Esc' returns to xim mode
+* [ ] syntax highlighting
+* [ ] xim mode
+    * [x] 'arrows' move up/down/left/right
+    * [x] 'PageUp|Down' move page up/down
+    * [x] 'Home|End' move to line start/end
+    * [x] 'j|k|l' move down/up/right
+    * [x] 'i' insert mode
+    * [x] 'v' visual mode
+    * [ ] 'V' visual line mode
+    * [x] ':' command mode
+    * [x] '/' search mode
+    * [x] 'y' copy
+    * [x] 'p' paste
+    * [x] 'd' cut
+    * [x] 'u' undo
+    * [x] 'r' redo
+    * [ ] 'dd' delete line
+* [ ] visual mode
+    * [x] 'arrows' move selection up/down/left/right
+    * [x] 'PageUp|Down' move selection page up/down
+    * [x] 'Home|End' move selection to line start/end
+    * [x] 'j|k|l' move selection down/up/right
+    * [x] 'y' copy
+    * [x] 'p' paste
+    * [x] 'd' cut
+    * [x] 'i' insert mode
+* [ ] command mode
+    * [x] u64 goto line
+    * [x] 'w' write
+    * [x] 'q' quit
+    * [x] 'wq' write and quit
+* [ ] search mode
+    * [ ] highlight
+    * [ ] selection
+    * [ ] search
+        * [ ] next
+        * [ ] prev
+    * [ ] replace
+        * [ ] all
+* [ ] error mode
+    * [x] error message
+    * [ ] debug dialog message
+* [ ] plugin mode
+    * [ ] notify
+* [ ] status bar // FIXME: use xi backend for status bar
+    * [x] file name
+    * [x] cursor pos
 
 
