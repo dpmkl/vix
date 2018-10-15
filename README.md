@@ -8,8 +8,7 @@ This project is based on [xi-term](https://github.com/xi-frontend/xi-term), just
 Both use the same base code from xi-term and have, due to naming, similar
 portions of code. A rename or merge to some point should be given consideration.
 
-Since the xi-editor is to implement a vi mode, this project may become obsolete
-depending on how it is implemented.
+Since the xi-editor is to implement a vi mode, this project may become obsolete.
 
 # Status
 * [x] 'Esc' returns to xim mode
