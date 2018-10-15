@@ -15,9 +15,9 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
 * [ ] syntax highlighting
 * [ ] xim mode
     * [x] 'arrows' move up/down/left/right
-    * [x] 'PageUp|Down' move page up/down
-    * [x] 'Home|End' move to line start/end
-    * [x] 'j|k|l' move down/up/right
+    * [x] 'PageUp ,Down' move page up/down
+    * [x] 'Home ,End' move to line start/end
+    * [x] 'j ,k ,l' move down/up/right
     * [x] 'i' insert mode
     * [x] 'v' visual mode
     * [ ] 'V' visual line mode
@@ -31,9 +31,9 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
     * [ ] 'dd' delete line
 * [ ] visual mode
     * [x] 'arrows' move selection up/down/left/right
-    * [x] 'PageUp|Down' move selection page up/down
-    * [x] 'Home|End' move selection to line start/end
-    * [x] 'j|k|l' move selection down/up/right
+    * [x] 'PageUp ,Down' move selection page up/down
+    * [x] 'Home ,End' move selection to line start/end
+    * [x] 'j ,k ,l' move selection down/up/right
     * [x] 'y' copy
     * [x] 'p' paste
     * [x] 'd' cut
