@@ -49,7 +49,7 @@ fn main() {
     let mut args = Vec::new();
     args.extend(std::env::args().skip(1));
 
-    if args.len() == 0 {
+    if args.is_empty() {
         let help = "no file specified";
         crit!("{}", help);
         println!("{}", help);

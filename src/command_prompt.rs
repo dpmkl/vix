@@ -56,7 +56,7 @@ impl FromStr for Command {
                             let sub = parts.remove(0);
                             match sub {
                                 "theme" => {
-                                    if parts.len() > 0 {
+                                    if parts.is_empty() {
                                         Ok(Command::SetTheme(parts[0].to_owned()))
                                     } else {
                                         Ok(Command::SetTheme(String::default()))
@@ -93,7 +93,7 @@ impl CommandPrompt {
             chars: "".to_string(),
             index: 0,
             input_type: InputType::Search,
-            prefix: "(search):".to_string(),
+            prefix: "/".to_string(),
         }
     }
 
@@ -102,7 +102,7 @@ impl CommandPrompt {
             chars: "".to_string(),
             index: 0,
             input_type: InputType::Command,
-            prefix: "(exec):".to_string(),
+            prefix: ":".to_string(),
         }
     }
 

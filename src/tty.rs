@@ -27,7 +27,7 @@ impl Tty {
         let tty = Tty {
             size: size_rx,
             stdin: stdin_rx,
-            stdout: stdout,
+            stdout,
         };
 
         Tty::start_stdin_listening(stdin_tx);

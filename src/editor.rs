@@ -177,11 +177,11 @@ impl Editor {
         }
     }
 
-    pub fn left(&mut self) {
-        if self.views.contains_key(&self.current_view) {
-            self.client.left(self.current_view);
-        }
-    }
+    // pub fn left(&mut self) {
+    //     if self.views.contains_key(&self.current_view) {
+    //         self.client.left(self.current_view);
+    //     }
+    // }
 
     pub fn right(&mut self) {
         if self.views.contains_key(&self.current_view) {

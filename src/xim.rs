@@ -183,24 +183,24 @@ impl Xim {
                     _ => {}
                 },
                 Mode::Command => {
-                    self.handle_command_prompt(event.clone());
+                    self.handle_command_prompt(&event.clone());
                 }
                 Mode::Insert => self.editor.handle_input(event),
                 Mode::Search => {
-                    self.handle_command_prompt(event.clone());
+                    self.handle_command_prompt(&event.clone());
                 }
             },
             event => {
                 if self.prompt.is_none() {
                     self.editor.handle_input(event);
                 } else {
-                    self.handle_command_prompt(event.clone());
+                    self.handle_command_prompt(&event.clone());
                 }
             }
         }
     }
 
-    fn handle_command_prompt(&mut self, event: Event) {
+    fn handle_command_prompt(&mut self, event: &Event) {
         if self.prompt.is_some() {
             let mut prompt = self.prompt.take().unwrap();
             match prompt.handle_input(&event) {
@@ -258,9 +258,8 @@ impl Xim {
                 _ => "",
             };
             self.editor.render(self.tty.stdout(), state);
-            match &self.mode {
-                Mode::Error(msg) => self.editor.render_error(self.tty.stdout(), msg),
-                _ => {}
+            if let Mode::Error(msg) = &self.mode {
+                self.editor.render_error(self.tty.stdout(), msg);
             }
         }
         if let Err(err) = self.tty.stdout().flush() {
@@ -304,7 +303,7 @@ impl XimService {
             Err(err) => {
                 let e = format!("Error completing send core event {}", err);
                 error!("{}", e);
-                return Box::new(future::err(e.into()));
+                Box::new(future::err(e.into()))
             }
         }
     }
