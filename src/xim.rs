@@ -132,6 +132,9 @@ impl Xim {
                     Key::PageDown => self.editor.select_page_down(),
                     Key::Home => self.editor.select_home(),
                     Key::End => self.editor.select_end(),
+                    Key::Char('j') => self.editor.select_down(),
+                    Key::Char('k') => self.editor.select_up(),
+                    Key::Char('l') => self.editor.select_right(),
                     _ => {}
                 },
                 Mode::Xim => match key {
