@@ -1,4 +1,4 @@
-# vix
+# vix(i)
 vix is a experimental modal text editor using the xi-editor backend inspired by
 vim. Focusing on emulating vim's modal states (vim,insert,visual) and behaviour
 as much as possible, by translating all corresponding actions to the xi core.
