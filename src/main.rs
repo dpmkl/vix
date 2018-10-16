@@ -4,8 +4,8 @@ mod editor;
 mod style;
 mod tty;
 mod view;
-mod window;
 mod vix;
+mod window;
 
 use futures::{Future, Stream};
 use slog::{Drain, Level, LevelFilter};

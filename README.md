@@ -1,10 +1,10 @@
 # vix(i)
 vix is a experimental modal text editor using the xi-editor backend inspired by
-vim. Focusing on emulating vim's modal states (vim,insert,visual) and behaviour
+vim, focusing on emulating vim's modal states (vim,insert,visual) and behaviour
 as much as possible, by translating all corresponding actions to the xi core.
 Not intended to be a vim rewrite, rather a familiar expirience.
 
-This project is based on [xi-term](https://github.com/xi-frontend/xi-term), just as [vim](https://github.com/xi-frontend/vix).
+This project is based on [xi-term](https://github.com/xi-frontend/xi-term), just as [xim](https://github.com/xi-frontend/vim).
 Both use the same base code from xi-term.
 
 Since the xi-editor is to implement a vi mode, this project may become obsolete.
@@ -19,7 +19,7 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
     * [x] 'j ,k ,l' move down/up/right
     * [x] 'i' insert mode
     * [x] 'v' visual mode
-    * [ ] 'V' visual line mode
+    * [x] 'V' visual line mode
     * [x] ':' command mode
     * [x] '/' search mode
     * [x] 'y' copy
@@ -27,7 +27,7 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
     * [x] 'd' cut
     * [x] 'u' undo
     * [x] 'r' redo
-    * [ ] 'dd' delete line
+    * [x] 'dd+' delete line(s)
 * [ ] visual mode
     * [x] 'arrows' move selection up/down/left/right
     * [x] 'PageUp ,Down' move selection page up/down

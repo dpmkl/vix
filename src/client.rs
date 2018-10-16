@@ -27,6 +27,31 @@ impl Client {
         tokio::spawn(f);
     }
 
+    pub fn select_line_end(&mut self) {
+        let f = self.inner.line_end_sel(self.view_id).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn select_line(&mut self) {
+        // FIXME: Find non blocking way by chaining
+        self.inner.line_start(self.view_id).wait().unwrap();
+        self.inner.line_end_sel(self.view_id).wait().unwrap();
+        // let end_sel = self.inner.line_end_sel(self.view_id).map_err(|_| ());
+        // let sel = self.inner.line_start(self.view_id).and_then(|_| {
+        //     info!("end sel spawn");
+        //     tokio::spawn(end_sel);
+        //     Ok(())
+        // }).map_err(|_| ());
+        // tokio::spawn(sel);
+    }
+
+    pub fn delete_line(&mut self) {
+        // FIXME: Find non blocking way by chaining
+        self.inner.line_start(self.view_id).wait().unwrap();
+        self.inner.line_end_sel(self.view_id).wait().unwrap();
+        self.inner.delete(self.view_id).wait().unwrap();
+    }
+
     pub fn goto_line(&mut self, line: u64) {
         let f = self.inner.goto_line(self.view_id, line).map_err(|_| ());
         tokio::spawn(f);

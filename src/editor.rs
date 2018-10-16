@@ -159,6 +159,24 @@ impl Editor {
         tokio::run(future);
     }
 
+    pub fn select_line(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.select_line();
+        }
+    }
+
+    pub fn select_line_end(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.select_line_end();
+        }
+    }
+
+    pub fn delete_line(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.delete_line();
+        }
+    }
+
     pub fn goto_line(&mut self, line: u64) {
         if let Some(view) = self.views.get_mut(&self.current_view) {
             view.goto_line(line);

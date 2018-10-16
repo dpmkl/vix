@@ -65,6 +65,18 @@ impl View {
         );
     }
 
+    pub fn select_line(&mut self) {
+        self.client.select_line();
+    }
+
+    pub fn select_line_end(&mut self) {
+        self.client.select_line_end();
+    }
+
+    pub fn delete_line(&mut self) {
+        self.client.delete_line();
+    }
+
     pub fn goto_line(&mut self, line: u64) {
         self.client.goto_line(line)
     }

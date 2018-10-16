@@ -25,7 +25,7 @@ pub enum Mode {
     Command,
     Search,
     Insert,
-    Visual,
+    Visual(bool),
 }
 
 pub struct Vix {
@@ -35,6 +35,7 @@ pub struct Vix {
     tty: Tty,
     tty_size: (u16, u16),
     shutdown: bool,
+    last_event: Event,
 }
 
 impl Vix {
@@ -53,6 +54,7 @@ impl Vix {
             tty: Tty::new()?,
             tty_size: (0, 0),
             shutdown: false,
+            last_event: Event::Unsupported(Vec::new()),
         })
     }
 
@@ -100,7 +102,7 @@ impl Vix {
 
     fn handle_input(&mut self, event: Event) {
         debug!("event: {:?}@{:?}", event, self.mode);
-        match event {
+        match event.clone() {
             Event::Key(Key::Ctrl('c')) => self.exit(),
             Event::Key(Key::Esc) => {
                 info!("entering vix mode");
@@ -110,7 +112,7 @@ impl Vix {
                 Mode::Error(_msg) => {
                     self.mode = Mode::Vix;
                 }
-                Mode::Visual => match key {
+                Mode::Visual(line_mode) => match key {
                     Key::Char('i') => self.mode = Mode::Insert,
                     Key::Char('p') => {
                         self.editor.paste();
@@ -124,16 +126,54 @@ impl Vix {
                         self.editor.cut();
                         self.mode = Mode::Vix
                     }
-                    Key::Left => self.editor.select_left(),
-                    Key::Right => self.editor.select_right(),
-                    Key::Down => self.editor.select_down(),
-                    Key::Up => self.editor.select_up(),
-                    Key::PageUp => self.editor.select_page_up(),
-                    Key::PageDown => self.editor.select_page_down(),
+                    Key::Left => {
+                        if !*line_mode {
+                            self.editor.select_left();
+                        }
+                    }
+                    Key::Right => {
+                        if !*line_mode {
+                            self.editor.select_right();
+                        }
+                    }
+                    Key::Down => {
+                        self.editor.select_down();
+                        if *line_mode {
+                            self.editor.select_line_end();
+                        }
+                    }
+                    Key::Up => {
+                        self.editor.select_up();
+                        if *line_mode {
+                            self.editor.select_line_end();
+                        }
+                    }
+                    Key::PageUp => {
+                        self.editor.select_page_up();
+                        if *line_mode {
+                            self.editor.select_line_end();
+                        }
+                    }
+                    Key::PageDown => {
+                        self.editor.select_page_down();
+                        if *line_mode {
+                            self.editor.select_line_end();
+                        }
+                    }
                     Key::Home => self.editor.select_home(),
                     Key::End => self.editor.select_end(),
-                    Key::Char('j') => self.editor.select_down(),
-                    Key::Char('k') => self.editor.select_up(),
+                    Key::Char('j') => {
+                        self.editor.select_down();
+                        if *line_mode {
+                            self.editor.select_line_end();
+                        }
+                    }
+                    Key::Char('k') => {
+                        self.editor.select_up();
+                        if *line_mode {
+                            self.editor.select_line_end();
+                        }
+                    }
                     Key::Char('l') => self.editor.select_right(),
                     _ => {}
                 },
@@ -146,7 +186,7 @@ impl Vix {
                     | Key::Home
                     | Key::End
                     | Key::PageUp
-                    | Key::PageDown => self.editor.handle_input(event),
+                    | Key::PageDown => self.editor.handle_input(event.clone()),
                     Key::Char('j') => self.editor.down(),
                     Key::Char('k') => self.editor.up(),
                     Key::Char('l') => self.editor.right(),
@@ -166,11 +206,12 @@ impl Vix {
                     }
                     Key::Char('v') => {
                         info!("entering visual mode");
-                        self.mode = Mode::Visual;
+                        self.mode = Mode::Visual(false);
                     }
                     Key::Char('V') => {
                         info!("entering visual line mode, FIXME");
-                        self.mode = Mode::Visual;
+                        self.editor.select_line();
+                        self.mode = Mode::Visual(true);
                     }
                     Key::Char('p') => {
                         self.editor.paste();
@@ -184,24 +225,30 @@ impl Vix {
                     Key::Char('r') => {
                         self.editor.redo();
                     }
+                    Key::Char('d') => {
+                        if self.last_event == Event::Key(Key::Char('d')) {
+                            self.editor.delete_line();
+                        }
+                    }
                     _ => {}
                 },
                 Mode::Command => {
                     self.handle_command_prompt(&event.clone());
                 }
-                Mode::Insert => self.editor.handle_input(event),
+                Mode::Insert => self.editor.handle_input(event.clone()),
                 Mode::Search => {
                     self.handle_command_prompt(&event.clone());
                 }
             },
             event => {
                 if self.prompt.is_none() {
-                    self.editor.handle_input(event);
+                    self.editor.handle_input(event.clone());
                 } else {
                     self.handle_command_prompt(&event.clone());
                 }
             }
         }
+        self.last_event = event;
     }
 
     fn handle_command_prompt(&mut self, event: &Event) {
@@ -258,7 +305,10 @@ impl Vix {
             let state = match self.mode {
                 Mode::Vix => "vix",
                 Mode::Insert => "insert",
-                Mode::Visual => "visual",
+                Mode::Visual(line_mode) => match line_mode {
+                    true => "visual line",
+                    false => "visual",
+                },
                 _ => "",
             };
             self.editor.render(self.tty.stdout(), state);
