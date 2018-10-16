@@ -1,6 +1,6 @@
 use crate::client::Client as ViewClient;
 use crate::view::View;
-use crate::xim::CoreEvent;
+use crate::vix::CoreEvent;
 use futures::sync::mpsc::UnboundedReceiver;
 use futures::{Async, Future, Stream};
 use std::collections::HashMap;

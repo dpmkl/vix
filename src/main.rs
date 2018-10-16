@@ -5,7 +5,7 @@ mod style;
 mod tty;
 mod view;
 mod window;
-mod xim;
+mod vix;
 
 use futures::{Future, Stream};
 use slog::{Drain, Level, LevelFilter};
@@ -45,7 +45,7 @@ fn setup_log(file: Option<String>) -> GlobalLoggerGuard {
 }
 
 fn main() {
-    let _guard = setup_log(Some("xim.log".to_owned()));
+    let _guard = setup_log(Some("vix.log".to_owned()));
     let mut args = Vec::new();
     args.extend(std::env::args().skip(1));
 
@@ -57,8 +57,8 @@ fn main() {
     }
 
     info!("Starting xi-core");
-    let (xim_builder, core_events_rx) = xim::XimServiceBuilder::new();
-    let (client, core_stderr) = xrl::spawn("xi-core", xim_builder);
+    let (vix_builder, core_events_rx) = vix::VixServiceBuilder::new();
+    let (client, core_stderr) = xrl::spawn("xi-core", vix_builder);
 
     let err_log = core_stderr
         .for_each(|msg| {
@@ -70,20 +70,20 @@ fn main() {
         tokio::run(err_log);
     });
 
-    info!("Starting xim");
-    let mut xim = match xim::Xim::new(client, core_events_rx) {
-        Ok(xim) => xim,
+    info!("Starting vix");
+    let mut vix = match vix::Vix::new(client, core_events_rx) {
+        Ok(vix) => vix,
         Err(err) => {
-            error!("Error starting xim: {}", err);
+            error!("Error starting vix: {}", err);
             ::std::process::exit(1);
         }
     };
 
     for file in args {
-        xim.handle_cmd(command_prompt::Command::Open(Some(file)));
+        vix.handle_cmd(command_prompt::Command::Open(Some(file)));
     }
 
-    tokio::run(xim.map_err(|err| {
+    tokio::run(vix.map_err(|err| {
         error!("{}", err);
         ()
     }));

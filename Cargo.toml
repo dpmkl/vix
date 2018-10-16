@@ -1,5 +1,5 @@
 [package]
-name = "xim"
+name = "vix"
 version = "0.2.1"
 authors = ["Michael E. Craggs <m.e.craggs@gmail.com>"]
 edition = "2018"

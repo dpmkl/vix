@@ -1,19 +1,18 @@
-# xim
-xim is a experimental modal text editor using the xi-editor backend inspired by
+# vix
+vix is a experimental modal text editor using the xi-editor backend inspired by
 vim. Focusing on emulating vim's modal states (vim,insert,visual) and behaviour
 as much as possible, by translating all corresponding actions to the xi core.
 Not intended to be a vim rewrite, rather a familiar expirience.
 
-This project is based on [xi-term](https://github.com/xi-frontend/xi-term), just as [xim](https://github.com/xi-frontend/xim).
-Both use the same base code from xi-term and have, due to naming, similar
-portions of code. A rename or merge to some point should be given consideration.
+This project is based on [xi-term](https://github.com/xi-frontend/xi-term), just as [vim](https://github.com/xi-frontend/vix).
+Both use the same base code from xi-term.
 
 Since the xi-editor is to implement a vi mode, this project may become obsolete.
 
 # Status
-* [x] 'Esc' returns to xim mode
+* [x] 'Esc' returns to vix mode
 * [ ] syntax highlighting
-* [ ] xim mode
+* [ ] vix mode
     * [x] 'arrows' move up/down/left/right
     * [x] 'PageUp ,Down' move page up/down
     * [x] 'Home ,End' move to line start/end

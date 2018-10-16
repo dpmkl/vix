@@ -20,7 +20,7 @@ pub enum CoreEvent {
 
 #[derive(Debug, PartialEq)]
 pub enum Mode {
-    Xim,
+    Vix,
     Error(String),
     Command,
     Search,
@@ -28,7 +28,7 @@ pub enum Mode {
     Visual,
 }
 
-pub struct Xim {
+pub struct Vix {
     editor: Editor,
     mode: Mode,
     prompt: Option<CommandPrompt>,
@@ -37,18 +37,18 @@ pub struct Xim {
     shutdown: bool,
 }
 
-impl Xim {
+impl Vix {
     pub fn new(
         mut client: Client,
         events: UnboundedReceiver<CoreEvent>,
     ) -> Result<Self, io::Error> {
         let mut dir = dirs::config_dir().unwrap();
-        dir.push("xim");
+        dir.push("vix");
         tokio::run(client.client_started(dir.to_str(), None).map_err(|_| ()));
 
-        Ok(Xim {
+        Ok(Vix {
             editor: Editor::new(client, events),
-            mode: Mode::Xim,
+            mode: Mode::Vix,
             prompt: None,
             tty: Tty::new()?,
             tty_size: (0, 0),
@@ -66,7 +66,7 @@ impl Xim {
     }
 
     pub fn handle_cmd(&mut self, cmd: Command) {
-        self.mode = Mode::Xim;
+        self.mode = Mode::Vix;
         match cmd {
             Command::Quit => {
                 info!("exiting ...");
@@ -103,26 +103,26 @@ impl Xim {
         match event {
             Event::Key(Key::Ctrl('c')) => self.exit(),
             Event::Key(Key::Esc) => {
-                info!("entering xim mode");
-                self.mode = Mode::Xim;
+                info!("entering vix mode");
+                self.mode = Mode::Vix;
             }
             Event::Key(key) => match &self.mode {
                 Mode::Error(_msg) => {
-                    self.mode = Mode::Xim;
+                    self.mode = Mode::Vix;
                 }
                 Mode::Visual => match key {
                     Key::Char('i') => self.mode = Mode::Insert,
                     Key::Char('p') => {
                         self.editor.paste();
-                        self.mode = Mode::Xim
+                        self.mode = Mode::Vix
                     }
                     Key::Char('y') => {
                         self.editor.copy();
-                        self.mode = Mode::Xim
+                        self.mode = Mode::Vix
                     }
                     Key::Char('d') => {
                         self.editor.cut();
-                        self.mode = Mode::Xim
+                        self.mode = Mode::Vix
                     }
                     Key::Left => self.editor.select_left(),
                     Key::Right => self.editor.select_right(),
@@ -137,7 +137,7 @@ impl Xim {
                     Key::Char('l') => self.editor.select_right(),
                     _ => {}
                 },
-                Mode::Xim => match key {
+                Mode::Vix => match key {
                     Key::Delete
                     | Key::Left
                     | Key::Right
@@ -150,14 +150,14 @@ impl Xim {
                     Key::Char('j') => self.editor.down(),
                     Key::Char('k') => self.editor.up(),
                     Key::Char('l') => self.editor.right(),
-                    Key::Char('i') => {
-                        info!("entering insert mode");
-                        self.mode = Mode::Insert;
-                    }
                     Key::Char(':') => {
                         info!("entering command mode");
                         self.mode = Mode::Command;
                         self.prompt = Some(CommandPrompt::execute());
+                    }
+                    Key::Char('i') => {
+                        info!("entering insert mode");
+                        self.mode = Mode::Insert;
                     }
                     Key::Char('/') => {
                         info!("entering search mode");
@@ -166,6 +166,10 @@ impl Xim {
                     }
                     Key::Char('v') => {
                         info!("entering visual mode");
+                        self.mode = Mode::Visual;
+                    }
+                    Key::Char('V') => {
+                        info!("entering visual line mode, FIXME");
                         self.mode = Mode::Visual;
                     }
                     Key::Char('p') => {
@@ -209,7 +213,7 @@ impl Xim {
                 }
                 Ok(Some(cmd)) => {
                     self.handle_cmd(cmd);
-                    self.mode = Mode::Xim;
+                    self.mode = Mode::Vix;
                 }
                 Err(err) => {
                     self.mode = Mode::Error(format!("Failed to parse cmd: '{:?}'!", err));
@@ -252,7 +256,7 @@ impl Xim {
             prompt.render(self.tty.stdout(), self.tty_size.1)?;
         } else {
             let state = match self.mode {
-                Mode::Xim => "xim",
+                Mode::Vix => "vix",
                 Mode::Insert => "insert",
                 Mode::Visual => "visual",
                 _ => "",
@@ -269,7 +273,7 @@ impl Xim {
     }
 }
 
-impl Future for Xim {
+impl Future for Vix {
     type Item = ();
     type Error = io::Error;
 
@@ -289,9 +293,9 @@ impl Future for Xim {
     }
 }
 
-pub struct XimService(UnboundedSender<CoreEvent>);
+pub struct VixService(UnboundedSender<CoreEvent>);
 
-impl XimService {
+impl VixService {
     fn send_core_event(&mut self, event: CoreEvent) -> ServerResult<()> {
         if let Err(err) = self.0.start_send(event) {
             let e = format!("Error starting send core event {}", err);
@@ -309,7 +313,7 @@ impl XimService {
     }
 }
 
-impl Frontend for XimService {
+impl Frontend for VixService {
     fn update(&mut self, update: Update) -> ServerResult<()> {
         self.send_core_event(CoreEvent::Update(update))
     }
@@ -353,17 +357,17 @@ impl Frontend for XimService {
     }
 }
 
-pub struct XimServiceBuilder(UnboundedSender<CoreEvent>);
+pub struct VixServiceBuilder(UnboundedSender<CoreEvent>);
 
-impl XimServiceBuilder {
+impl VixServiceBuilder {
     pub fn new() -> (Self, UnboundedReceiver<CoreEvent>) {
         let (tx, rx) = unbounded();
-        (XimServiceBuilder(tx), rx)
+        (VixServiceBuilder(tx), rx)
     }
 }
 
-impl FrontendBuilder<XimService> for XimServiceBuilder {
-    fn build(self, _client: Client) -> XimService {
-        XimService(self.0)
+impl FrontendBuilder<VixService> for VixServiceBuilder {
+    fn build(self, _client: Client) -> VixService {
+        VixService(self.0)
     }
 }
