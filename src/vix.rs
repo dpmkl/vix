@@ -7,8 +7,8 @@ use std::io::{self, Write};
 use termion::event::{Event, Key};
 use tokio;
 use xrl::{
-    AvailablePlugins, Client, ConfigChanged, Frontend, FrontendBuilder, PluginStarted,
-    PluginStoped, ScrollTo, ServerResult, Style, ThemeChanged, Update, UpdateCmds,
+    AvailablePlugins, Client, ConfigChanged, Frontend, FrontendBuilder, ModifySelection,
+    PluginStarted, PluginStoped, ScrollTo, ServerResult, Style, ThemeChanged, Update, UpdateCmds,
 };
 
 #[derive(Debug)]
@@ -89,7 +89,11 @@ impl Vix {
             Command::SetTheme(theme) => {
                 self.editor.set_theme(&theme);
             }
-            Command::Search(_search) => {}
+            Command::Search(search) => {
+                self.editor.find(&search, true, false, false);
+                self.editor.find_all();
+                self.editor.highlight_find(true);
+            }
             Command::GotoLine(line) => {
                 let line = match line {
                     0 => 0,
@@ -229,6 +233,14 @@ impl Vix {
                         if self.last_event == Event::Key(Key::Char('d')) {
                             self.editor.delete_line();
                         }
+                    }
+                    Key::Char('n') => {
+                        self.editor.find_next(true, false, ModifySelection::None);
+                        self.editor.highlight_find(true);
+                    }
+                    Key::Char('N') => {
+                        self.editor.find_prev(true, false, ModifySelection::None);
+                        self.editor.highlight_find(true);
                     }
                     _ => {}
                 },
@@ -401,8 +413,8 @@ impl Frontend for VixService {
         Box::new(future::ok(()))
     }
 
-    fn theme_changed(&mut self, _theme: ThemeChanged) -> ServerResult<()> {
-        warn!("ThemeChanged not implemented");
+    fn theme_changed(&mut self, theme: ThemeChanged) -> ServerResult<()> {
+        warn!("ThemeChanged not implemented {:?}", theme);
         Box::new(future::ok(()))
     }
 }

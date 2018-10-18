@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::io::Write;
 use termion::event::Event;
 use tokio;
-use xrl::{Client, ClientResult, ScrollTo, Style, Update, ViewId};
+use xrl::{Client, ClientResult, ModifySelection, ScrollTo, Style, Update, ViewId};
 
 pub struct Editor {
     clipboard: String, // FIXME: Replace this with something better
@@ -151,6 +151,52 @@ impl Editor {
     pub fn redo(&mut self) {
         if let Some(view) = self.views.get_mut(&self.current_view) {
             view.redo();
+        }
+    }
+
+    pub fn find(
+        &mut self,
+        search_term: &str,
+        case_sensitive: bool,
+        regex: bool,
+        whole_words: bool,
+    ) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.find(search_term, case_sensitive, regex, whole_words);
+        }
+    }
+
+    pub fn find_next(
+        &mut self,
+        wrap_around: bool,
+        allow_same: bool,
+        modify_selection: ModifySelection,
+    ) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.find_next(wrap_around, allow_same, modify_selection);
+        }
+    }
+
+    pub fn find_prev(
+        &mut self,
+        wrap_around: bool,
+        allow_same: bool,
+        modify_selection: ModifySelection,
+    ) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.find_prev(wrap_around, allow_same, modify_selection);
+        }
+    }
+
+    pub fn find_all(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.find_all();
+        }
+    }
+
+    pub fn highlight_find(&mut self, visible: bool) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.highlight_find(visible);
         }
     }
 

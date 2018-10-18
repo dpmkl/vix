@@ -28,6 +28,8 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
     * [x] 'u' undo
     * [x] 'r' redo
     * [x] 'dd+' delete line(s)
+    * [ ] 'n' find next
+    * [ ] 'N' find prev
 * [ ] visual mode
     * [x] 'arrows' move selection up/down/left/right
     * [x] 'PageUp ,Down' move selection page up/down
@@ -37,6 +39,7 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
     * [x] 'p' paste
     * [x] 'd' cut
     * [x] 'i' insert mode
+    * [ ] '/' search mode
 * [ ] command mode
     * [x] u64 goto line
     * [x] 'w' write
@@ -44,7 +47,6 @@ Since the xi-editor is to implement a vi mode, this project may become obsolete.
     * [x] 'wq' write and quit
 * [ ] search mode
     * [ ] highlight
-    * [ ] selection
     * [ ] search
         * [ ] next
         * [ ] prev

@@ -2,7 +2,7 @@ use futures::Future;
 use serde_json::Value;
 use tokio;
 use xrl;
-use xrl::ClientResult;
+use xrl::{ClientResult, ModifySelection};
 
 pub struct Client {
     inner: xrl::Client,
@@ -77,6 +77,65 @@ impl Client {
 
     pub fn redo(&mut self) {
         let f = self.inner.redo(self.view_id).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn find(
+        &mut self,
+        search_term: &str,
+        case_sensitive: bool,
+        regex: bool,
+        whole_words: bool,
+    ) {
+        let f = self
+            .inner
+            .find(
+                self.view_id,
+                search_term,
+                case_sensitive,
+                regex,
+                whole_words,
+            )
+            .map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn find_next(
+        &mut self,
+        wrap_around: bool,
+        allow_same: bool,
+        modify_selection: ModifySelection,
+    ) {
+        let f = self
+            .inner
+            .find_next(self.view_id, wrap_around, allow_same, modify_selection)
+            .map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn find_prev(
+        &mut self,
+        wrap_around: bool,
+        allow_same: bool,
+        modify_selection: ModifySelection,
+    ) {
+        let f = self
+            .inner
+            .find_prev(self.view_id, wrap_around, allow_same, modify_selection)
+            .map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn find_all(&mut self) {
+        let f = self.inner.find_all(self.view_id).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
+    pub fn highlight_find(&mut self, visible: bool) {
+        let f = self
+            .inner
+            .highlight_find(self.view_id, visible)
+            .map_err(|_| ());
         tokio::spawn(f);
     }
 

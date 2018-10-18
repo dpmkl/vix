@@ -10,7 +10,7 @@ use termion::color;
 use termion::cursor::Goto;
 use termion::event::{Event, Key, MouseButton, MouseEvent};
 use termion::style::{Bold, Reset};
-use xrl::{ClientResult, Line, LineCache, Style, Update};
+use xrl::{ClientResult, Line, LineCache, ModifySelection, Style, Update};
 
 const TAB_LENGTH: u16 = 4;
 
@@ -99,6 +99,45 @@ impl View {
 
     pub fn redo(&mut self) {
         self.client.redo();
+    }
+
+    pub fn find(
+        &mut self,
+        search_term: &str,
+        case_sensitive: bool,
+        regex: bool,
+        whole_words: bool,
+    ) {
+        self.client
+            .find(search_term, case_sensitive, regex, whole_words);
+    }
+
+    pub fn find_next(
+        &mut self,
+        wrap_around: bool,
+        allow_same: bool,
+        modify_selection: ModifySelection,
+    ) {
+        self.client
+            .find_next(wrap_around, allow_same, modify_selection);
+    }
+
+    pub fn find_prev(
+        &mut self,
+        wrap_around: bool,
+        allow_same: bool,
+        modify_selection: ModifySelection,
+    ) {
+        self.client
+            .find_prev(wrap_around, allow_same, modify_selection);
+    }
+
+    pub fn find_all(&mut self) {
+        self.client.find_all();
+    }
+
+    pub fn highlight_find(&mut self, visible: bool) {
+        self.client.highlight_find(visible);
     }
 
     pub fn save(&mut self) -> ClientResult<()> {
