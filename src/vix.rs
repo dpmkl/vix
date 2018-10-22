@@ -317,10 +317,13 @@ impl Vix {
             let state = match self.mode {
                 Mode::Vix => "vix",
                 Mode::Insert => "insert",
-                Mode::Visual(line_mode) => match line_mode {
-                    true => "visual line",
-                    false => "visual",
-                },
+                Mode::Visual(line_mode) => {
+                    if line_mode {
+                        "visual line"
+                    } else {
+                        "visual"
+                    }
+                }
                 _ => "",
             };
             self.editor.render(self.tty.stdout(), state);
