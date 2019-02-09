@@ -38,7 +38,7 @@ fn setup_log(file: Option<String>) -> GlobalLoggerGuard {
             slog_async::Async::new(drain).build().fuse()
         }
     };
-    let log = slog::Logger::root(LevelFilter::new(drain, Level::Info).fuse(), o!());
+    let log = slog::Logger::root(LevelFilter::new(drain, Level::Trace).fuse(), o!());
     slog_scope::set_global_logger(log)
 }
 
@@ -85,6 +85,5 @@ fn main() {
 
     tokio::run(vix.map_err(|err| {
         error!("{}", err);
-        ()
     }));
 }

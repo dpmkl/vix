@@ -12,8 +12,6 @@ use termion::event::{Event, Key, MouseButton, MouseEvent};
 use termion::style::{Bold, Reset};
 use xrl::{ClientResult, Line, LineCache, ModifySelection, Style, Update};
 
-const TAB_LENGTH: u16 = 4;
-
 #[derive(Debug, Default, Clone)]
 pub struct Cursor {
     pub line: u64,
@@ -26,6 +24,8 @@ pub struct View {
     window: Window,
     file: Option<String>,
     client: Client,
+    gutter_size: u16,
+    tab_width: u16,
 }
 
 impl View {
@@ -36,6 +36,8 @@ impl View {
             cursor: Default::default(),
             window: Window::new(),
             file,
+            gutter_size: 0,
+            tab_width: 4,
         }
     }
 
@@ -155,6 +157,9 @@ impl View {
         }
         let cursor_line = self.cursor.line - self.cache.before();
         let nb_lines = self.cache.lines().len() as u64;
+        self.gutter_size = (self.cache.before() + nb_lines + self.cache.after())
+            .to_string()
+            .len() as u16;
         self.window.update(cursor_line, nb_lines);
     }
 
@@ -166,7 +171,7 @@ impl View {
             }
             let mut text_len: u16 = 0;
             for (idx, c) in line.text.chars().enumerate() {
-                text_len = add_char_width(text_len, c);
+                text_len = self.translate_char_width(text_len, c);
                 if u64::from(text_len) >= y {
                     return (lineno as u64, idx as u64 + 1);
                 }
@@ -250,17 +255,26 @@ impl View {
             .skip(self.window.start() as usize)
             .take(self.window.size() as usize);
 
-        for (lineno, line) in lines.enumerate() {
-            self.render_line(w, line, lineno, styles);
+        let mut line_strings = String::new();
+        let mut line_no = self.cache.before() + self.window.start();
+        for (line_index, line) in lines.enumerate() {
+            line_strings.push_str(&self.render_line_str(line, Some(line_no), line_index, styles));
+            line_no += 1;
         }
 
         let line_count = self.cache.lines().len() as u16;
         let win_size = self.window.size();
         if win_size > line_count {
             for num in line_count..win_size {
-                self.render_line(w, &Line::default(), num as usize, styles);
+                line_strings.push_str(&self.render_line_str(
+                    &Line::default(),
+                    None,
+                    num as usize,
+                    styles,
+                ));
             }
         }
+        w.write_all(line_strings.as_bytes()).unwrap();
     }
 
     fn render_status<W: Write>(&mut self, w: &mut W, state: &str) {
@@ -286,21 +300,55 @@ impl View {
         .unwrap();
     }
 
-    fn render_line<W: Write>(
+    fn render_line_str(
         &self,
-        w: &mut W,
         line: &Line,
-        lineno: usize,
+        lineno: Option<u64>,
+        line_index: usize,
         styles: &HashMap<u64, Style>,
-    ) {
-        let text = self.add_styles(styles, line);
-        if let Err(e) = write!(w, "{}{}{}", Goto(1, lineno as u16 + 1), CurrentLine, &text) {
-            error!("failed to render line: {}", e);
+    ) -> String {
+        let text = self.escape_control_and_add_styles(styles, line);
+        if let Some(line_no) = lineno {
+            format!(
+                "{}{}{}{}{}",
+                Goto(1, line_index as u16 + 1),
+                CurrentLine,
+                (line_no + 1).to_string(),
+                Goto(self.gutter_size + 1, line_index as u16 + 1),
+                &text
+            )
+        } else {
+            format!(
+                "{}{}{}",
+                Goto(self.gutter_size + 1, line_index as u16 + 1),
+                CurrentLine,
+                &text
+            )
         }
     }
 
-    fn add_styles(&self, styles: &HashMap<u64, Style>, line: &Line) -> String {
-        let mut text = line.text.clone();
+    fn escape_control_and_add_styles(&self, styles: &HashMap<u64, Style>, line: &Line) -> String {
+        let mut position: u16 = 0;
+        let mut text = String::with_capacity(line.text.capacity());
+        for c in line.text.chars() {
+            match c {
+                '\x00'...'\x08' | '\x0a'...'\x1f' | '\x7f' => {
+                    // Render in caret notation, i.e. '\x02' is rendered as '^B'
+                    text.push('^');
+                    text.push((c as u8 ^ 0x40u8) as char);
+                    position += 2;
+                }
+                '\t' => {
+                    let tab_width = self.tab_width_at_position(position);
+                    text.push_str(&" ".repeat(tab_width as usize));
+                    position += tab_width;
+                }
+                _ => {
+                    text.push(c);
+                    position += 1;
+                }
+            }
+        }
         if line.styles.is_empty() {
             return text;
         }
@@ -315,6 +363,10 @@ impl View {
         }
         trace!("styled line: {:?}", text);
         text
+    }
+
+    fn tab_width_at_position(&self, position: u16) -> u16 {
+        self.tab_width - (position % self.tab_width)
     }
 
     fn get_style_sequences(
@@ -408,7 +460,7 @@ impl View {
             .text
             .chars()
             .take(self.cursor.column as usize)
-            .fold(0, add_char_width);
+            .fold(0, |acc, c| acc + self.translate_char_width(acc, c));
 
         let cursor_pos = Goto(column as u16 + 1, line_pos as u16 + 1);
         if let Err(e) = write!(w, "{}", cursor_pos) {
@@ -416,12 +468,12 @@ impl View {
         }
         debug!("cursor rendered at ({}, {})", line_pos, column);
     }
-}
 
-fn add_char_width(acc: u16, c: char) -> u16 {
-    if c == '\t' {
-        acc + TAB_LENGTH - (acc % TAB_LENGTH)
-    } else {
-        acc + 1
+    fn translate_char_width(&self, position: u16, c: char) -> u16 {
+        match c {
+            '\x00'...'\x08' | '\x0a'...'\x1f' | '\x7f' => 2,
+            '\t' => self.tab_width_at_position(position),
+            _ => 1,
+        }
     }
 }
