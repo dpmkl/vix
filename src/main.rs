@@ -78,7 +78,9 @@ fn main() {
             ::std::process::exit(1);
         }
     };
-
+    vix.handle_cmd(command_prompt::Command::SetTheme(
+        "base16-eighties.dark".to_owned(),
+    ));
     for file in args {
         vix.handle_cmd(command_prompt::Command::Open(Some(file)));
     }

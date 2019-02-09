@@ -44,7 +44,7 @@ impl Vix {
         events: UnboundedReceiver<CoreEvent>,
     ) -> Result<Self, io::Error> {
         let mut dir = dirs::config_dir().unwrap();
-        dir.push("vix");
+        dir.push("xi");
         tokio::run(client.client_started(dir.to_str(), None).map_err(|_| ()));
 
         Ok(Vix {
