@@ -324,7 +324,7 @@ impl View {
             )
         } else {
             format!(
-                "{}{}{}",
+                "{}{}~{}",
                 Goto(self.gutter_size + 1, line_index as u16 + 1),
                 CurrentLine,
                 &text
