@@ -1,0 +1,12 @@
+tab_size = 4
+translate_tabs_to_spaces = true
+use_tab_stops = true
+
+plugin_search_path = []
+
+font_face = "Inconsolata"
+font_size = 14
+
+auto_indent = true
+scroll_past_end = false
+autodetect_whitespace = true
