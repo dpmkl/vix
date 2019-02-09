@@ -1,5 +1,5 @@
 /target
 **/*.rs.bk
 Cargo.lock
-xim.log
+vix.log
 protocol.txt

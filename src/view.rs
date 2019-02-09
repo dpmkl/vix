@@ -228,15 +228,15 @@ impl View {
         let win_size = self.window.size();
         write!(
             w,
-            "{}{}{}{}{}{} : {}",
+            "{}{}{}error{}{} : {}",
             Goto(1, win_size),
             CurrentLine,
             Bold,
             color::Fg(color::Red),
-            "error",
             Reset,
             msg
-        );
+        )
+        .unwrap();
     }
 
     fn render_lines<W: Write>(&self, w: &mut W, styles: &HashMap<u64, Style>) {
@@ -282,7 +282,8 @@ impl View {
             file,
             cur.line + 1,
             cur.column + 1
-        );
+        )
+        .unwrap();
     }
 
     fn render_line<W: Write>(

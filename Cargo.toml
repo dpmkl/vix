@@ -1,6 +1,6 @@
 [package]
 name = "vix"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Michael E. Craggs <m.e.craggs@gmail.com>"]
 edition = "2018"
 description = "A vim like modal text editor using the xi-editor backend"

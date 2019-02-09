@@ -30,14 +30,12 @@ fn setup_log(file: Option<String>) -> GlobalLoggerGuard {
 
             let decorator = slog_term::PlainDecorator::new(file);
             let drain = slog_term::CompactFormat::new(decorator).build().fuse();
-            let drain = slog_async::Async::new(drain).build().fuse();
-            drain
+            slog_async::Async::new(drain).build().fuse()
         }
         None => {
             let decorator = slog_term::TermDecorator::new().build();
             let drain = slog_term::CompactFormat::new(decorator).build().fuse();
-            let drain = slog_async::Async::new(drain).build().fuse();
-            drain
+            slog_async::Async::new(drain).build().fuse()
         }
     };
     let log = slog::Logger::root(LevelFilter::new(drain, Level::Info).fuse(), o!());
