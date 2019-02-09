@@ -205,6 +205,12 @@ impl Editor {
         tokio::run(future);
     }
 
+    pub fn collapse_selections(&mut self) {
+        if let Some(view) = self.views.get_mut(&self.current_view) {
+            view.collapse_selections();
+        }
+    }
+
     pub fn select_line(&mut self) {
         if let Some(view) = self.views.get_mut(&self.current_view) {
             view.select_line();

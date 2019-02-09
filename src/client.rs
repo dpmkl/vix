@@ -27,6 +27,11 @@ impl Client {
         tokio::spawn(f);
     }
 
+    pub fn collapse_selections(&mut self) {
+        let f = self.inner.collapse_selections(self.view_id).map_err(|_| ());
+        tokio::spawn(f);
+    }
+
     pub fn select_line_end(&mut self) {
         let f = self.inner.line_end_sel(self.view_id).map_err(|_| ());
         tokio::spawn(f);

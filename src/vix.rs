@@ -111,6 +111,7 @@ impl Vix {
             Event::Key(Key::Esc) => {
                 info!("entering vix mode");
                 self.mode = Mode::Vix;
+                self.editor.collapse_selections();
             }
             Event::Key(key) => match &self.mode {
                 Mode::Error(_msg) => {

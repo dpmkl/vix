@@ -67,6 +67,10 @@ impl View {
         );
     }
 
+    pub fn collapse_selections(&mut self) {
+        self.client.collapse_selections();
+    }
+
     pub fn select_line(&mut self) {
         self.client.select_line();
     }
