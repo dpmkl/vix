@@ -221,9 +221,6 @@ impl Vix {
                     Key::Char('p') => {
                         self.editor.paste();
                     }
-                    Key::Char('y') => {
-                        self.editor.copy();
-                    }
                     Key::Char('u') => {
                         self.editor.undo();
                     }
@@ -412,8 +409,8 @@ impl Frontend for VixService {
         Box::new(future::ok(()))
     }
 
-    fn config_changed(&mut self, _config: ConfigChanged) -> ServerResult<()> {
-        warn!("ConfigChanged not implemented");
+    fn config_changed(&mut self, config: ConfigChanged) -> ServerResult<()> {
+        warn!("ConfigChanged not implemented! {:?}", config);
         Box::new(future::ok(()))
     }
 

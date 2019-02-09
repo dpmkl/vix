@@ -18,6 +18,38 @@ extern crate slog;
 #[macro_use]
 extern crate slog_scope;
 
+const HELP: &str = r#"
+---
+Usage: vix <FILE> <FILE> ...
+
+Key bindings:
+  'Esc' always returns to vix mode
+  vix mode:
+    'i' insert mode
+    ':' command mode
+    '/' search mode
+    'v' visual mode
+	'u' undo
+    'r' redo
+    'dd+' delete line(s)
+    'p' paste
+    'n' next
+    'N' prev
+  command mode:
+    '#' goto line
+    'w' write
+    'q' quit
+    'wq' write and quit
+  search mode:
+    'TERM' work in progress ...
+  visual mode:
+    'i' insert mode
+    'p' paste
+    'y' copy
+    'd' cut
+    navigation: page, home, arrow keys
+"#;
+
 fn setup_log(file: Option<String>) -> GlobalLoggerGuard {
     let drain = match file {
         Some(file) => {
@@ -47,11 +79,26 @@ fn main() {
     let mut args = Vec::new();
     args.extend(std::env::args().skip(1));
 
+    let header = format!(
+        "{} {} (c) {} \n\n{}",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_VERSION"),
+        env!("CARGO_PKG_AUTHORS"),
+        env!("CARGO_PKG_DESCRIPTION")
+    );
+
     if args.is_empty() {
-        let help = "no file specified";
-        crit!("{}", help);
-        println!("{}", help);
+        println!("{}\nAdd -h or --help for more information", header);
         return;
+    }
+
+    println!("{:?}", args);
+
+    if let Some(arg) = args.first() {
+        if arg == "-h" || arg == "--help" {
+            println!("{}\nAdd -h for more information {}", header, HELP);
+            return;
+        }
     }
 
     info!("Starting xi-core");

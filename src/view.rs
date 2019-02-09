@@ -161,9 +161,10 @@ impl View {
         }
         let cursor_line = self.cursor.line - self.cache.before();
         let nb_lines = self.cache.lines().len() as u64;
-        self.gutter_size = 1 + (self.cache.before() + nb_lines + self.cache.after())
-            .to_string()
-            .len() as u16;
+        self.gutter_size = 1
+            + (self.cache.before() + nb_lines + self.cache.after())
+                .to_string()
+                .len() as u16;
         self.window.update(cursor_line, nb_lines);
     }
 
