@@ -466,7 +466,7 @@ impl View {
             .take(self.cursor.column as usize)
             .fold(0, |acc, c| acc + self.translate_char_width(acc, c));
 
-        let cursor_pos = Goto(column as u16 + 1, line_pos as u16 + 1);
+        let cursor_pos = Goto(self.gutter_size + column as u16 + 1, line_pos as u16 + 1);
         if let Err(e) = write!(w, "{}", cursor_pos) {
             error!("failed to render cursor: {}", e);
         }
