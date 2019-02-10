@@ -1,4 +1,5 @@
 use crate::client::Client;
+use crate::modal::error_dialog;
 use crate::style::{reset_style, set_style};
 use crate::window::Window;
 use serde_json::Value;
@@ -56,6 +57,7 @@ impl View {
         self.render_lines(w, styles);
         self.render_status(w, state);
         self.render_cursor(w);
+        self.render_error_dlg(w);
     }
 
     pub fn resize(&mut self, height: u16) {
@@ -472,6 +474,11 @@ impl View {
             error!("failed to render cursor: {}", e);
         }
         debug!("cursor rendered at ({}, {})", line_pos, column);
+    }
+
+    fn render_error_dlg<W: Write>(&self, w: &mut W) {
+        let win_size = self.window.size();
+        write!(w, "{}", error_dialog("error", win_size)).unwrap();
     }
 
     fn translate_char_width(&self, position: u16, c: char) -> u16 {

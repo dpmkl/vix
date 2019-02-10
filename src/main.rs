@@ -1,6 +1,7 @@
 mod client;
 mod command_prompt;
 mod editor;
+mod modal;
 mod style;
 mod tty;
 mod view;
@@ -91,8 +92,6 @@ fn main() {
         println!("{}\nAdd -h or --help for more information", header);
         return;
     }
-
-    println!("{:?}", args);
 
     if let Some(arg) = args.first() {
         if arg == "-h" || arg == "--help" {
