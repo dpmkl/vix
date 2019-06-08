@@ -49,9 +49,9 @@ impl Editor {
 
     pub fn handle_resize(&mut self, size: (u16, u16)) {
         info!("Setting new terminal size");
-        self.size = size;
+        self.size = (size.0, size.1 - 1);
         if let Some(view) = self.views.get_mut(&self.current_view) {
-            view.resize(size.1);
+            view.resize(self.size.1)
         } else {
             warn!("View {} not found", self.current_view);
         }

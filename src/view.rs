@@ -235,7 +235,7 @@ impl View {
     }
 
     pub fn render_error<W: Write>(&mut self, w: &mut W, msg: &str) {
-        let win_size = self.window.size();
+        let win_size = self.window.size() + 1;
         write!(
             w,
             "{}{}{}error{}{} : {}",
@@ -283,7 +283,7 @@ impl View {
     }
 
     fn render_status<W: Write>(&mut self, w: &mut W, state: &str) {
-        let win_size = self.window.size();
+        let win_size = self.window.size() + 1;
         let file = match self.file.as_ref().map(|s| s) {
             None => "<nofile>".to_owned(),
             Some(file) => file.to_owned(),
