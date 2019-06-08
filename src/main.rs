@@ -92,8 +92,6 @@ fn main() {
         return;
     }
 
-    println!("{:?}", args);
-
     if let Some(arg) = args.first() {
         if arg == "-h" || arg == "--help" {
             println!("{}\nAdd -h for more information {}", header, HELP);

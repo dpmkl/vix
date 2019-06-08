@@ -429,13 +429,28 @@ impl Frontend for VixService {
             xi::PluginStoped(plugin) => self.plugin_stoped(plugin),
             xi::ConfigChanged(config) => self.config_changed(config),
             xi::ThemeChanged(theme) => self.theme_changed(theme),
-            xi::Alert(_)
-            | xi::AvailableThemes(_)
-            | xi::FindStatus(_)
-            | xi::ReplaceStatus(_)
-            | xi::AvailableLanguages(_)
-            | xi::LanguageChanged(_) => {
-                println!("Not implemented!!!");
+            xi::Alert(_) => {
+                warn!("XiNotification::Alert not implemented!!!");
+                Box::new(future::ok(()))
+            }
+            xi::AvailableThemes(_) => {
+                warn!("XiNotification::AvailableThemes not implemented!!!");
+                Box::new(future::ok(()))
+            }
+            xi::FindStatus(_) => {
+                warn!("XiNotification::FindStatus not implemented!!!");
+                Box::new(future::ok(()))
+            }
+            xi::ReplaceStatus(_) => {
+                warn!("XiNotification::ReplaceStatus not implemented!!!");
+                Box::new(future::ok(()))
+            }
+            xi::AvailableLanguages(_) => {
+                warn!("XiNotification::AvailableLanguages not implemented!!!");
+                Box::new(future::ok(()))
+            }
+            xi::LanguageChanged(_) => {
+                warn!("XiNotification::LanguageChanged not implemented!!!");
                 Box::new(future::ok(()))
             }
         }
