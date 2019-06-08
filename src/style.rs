@@ -21,14 +21,20 @@ pub fn set_style(style: &Style) -> Result<String, fmt::Error> {
     if let Some(fg_color) = style.fg_color {
         write!(&mut s, "{}", color::Fg(get_color(fg_color)))?;
     }
-    if style.bg_color != 0 {
-        write!(&mut s, "{}", color::Bg(get_color(style.bg_color)))?;
+    if let Some(bg_color) = style.bg_color {
+        if bg_color != 0 {
+            write!(&mut s, "{}", color::Bg(get_color(bg_color)))?;
+        }
     }
-    if style.italic {
-        write!(&mut s, "{}", termion::style::Italic)?;
+    if let Some(italic) = style.italic {
+        if italic {
+            write!(&mut s, "{}", termion::style::Italic)?;
+        }
     }
-    if style.underline {
-        write!(&mut s, "{}", termion::style::Underline)?;
+    if let Some(underline) = style.underline {
+        if underline {
+            write!(&mut s, "{}", termion::style::Underline)?;
+        }
     }
     Ok(s)
 }
@@ -43,14 +49,20 @@ pub fn reset_style(style: &Style) -> Result<String, fmt::Error> {
     if style.fg_color.is_some() {
         write!(&mut s, "{}", color::Fg(color::Reset))?;
     }
-    if style.bg_color != 0 {
-        write!(&mut s, "{}", color::Bg(color::Reset))?;
+    if let Some(bg_color) = style.bg_color {
+        if bg_color != 0 {
+            write!(&mut s, "{}", color::Bg(get_color(bg_color)))?;
+        }
     }
-    if style.italic {
-        write!(&mut s, "{}", termion::style::NoItalic)?;
+    if let Some(italic) = style.italic {
+        if italic {
+            write!(&mut s, "{}", termion::style::Italic)?;
+        }
     }
-    if style.underline {
-        write!(&mut s, "{}", termion::style::NoUnderline)?;
+    if let Some(underline) = style.underline {
+        if underline {
+            write!(&mut s, "{}", termion::style::Underline)?;
+        }
     }
     Ok(s)
 }

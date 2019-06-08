@@ -7,8 +7,9 @@ use std::io::{self, Write};
 use termion::event::{Event, Key};
 use tokio;
 use xrl::{
-    AvailablePlugins, Client, ConfigChanged, Frontend, FrontendBuilder, ModifySelection,
-    PluginStarted, PluginStoped, ScrollTo, ServerResult, Style, ThemeChanged, Update, UpdateCmds,
+    AvailablePlugins, Client, ConfigChanged, Frontend, FrontendBuilder, MeasureWidth,
+    ModifySelection, PluginStarted, PluginStoped, ScrollTo, ServerResult, Style, ThemeChanged,
+    Update, UpdateCmds, XiNotification,
 };
 
 #[derive(Debug)]
@@ -39,10 +40,7 @@ pub struct Vix {
 }
 
 impl Vix {
-    pub fn new(
-        mut client: Client,
-        events: UnboundedReceiver<CoreEvent>,
-    ) -> Result<Self, io::Error> {
+    pub fn new(client: Client, events: UnboundedReceiver<CoreEvent>) -> Result<Self, io::Error> {
         let mut dir = dirs::config_dir().unwrap();
         dir.push("xi");
         tokio::run(client.client_started(dir.to_str(), None).map_err(|_| ()));
@@ -374,9 +372,7 @@ impl VixService {
             }
         }
     }
-}
 
-impl Frontend for VixService {
     fn update(&mut self, update: Update) -> ServerResult<()> {
         self.send_core_event(CoreEvent::Update(update))
     }
@@ -417,6 +413,35 @@ impl Frontend for VixService {
     fn theme_changed(&mut self, theme: ThemeChanged) -> ServerResult<()> {
         warn!("ThemeChanged not implemented {:?}", theme);
         Box::new(future::ok(()))
+    }
+}
+
+impl Frontend for VixService {
+    fn handle_notification(&mut self, notification: XiNotification) -> ServerResult<()> {
+        use XiNotification as xi;
+        match notification {
+            xi::Update(update) => self.update(update),
+            xi::ScrollTo(scroll_to) => self.scroll_to(scroll_to),
+            xi::DefStyle(style) => self.def_style(style),
+            xi::AvailablePlugins(plugins) => self.available_plugins(plugins),
+            xi::UpdateCmds(update_cmds) => self.update_cmds(update_cmds),
+            xi::PluginStarted(plugin) => self.plugin_started(plugin),
+            xi::PluginStoped(plugin) => self.plugin_stoped(plugin),
+            xi::ConfigChanged(config) => self.config_changed(config),
+            xi::ThemeChanged(theme) => self.theme_changed(theme),
+            xi::Alert(_)
+            | xi::AvailableThemes(_)
+            | xi::FindStatus(_)
+            | xi::ReplaceStatus(_)
+            | xi::AvailableLanguages(_)
+            | xi::LanguageChanged(_) => {
+                println!("Not implemented!!!");
+                Box::new(future::ok(()))
+            }
+        }
+    }
+    fn handle_measure_width(&mut self, _request: MeasureWidth) -> ServerResult<Vec<Vec<f32>>> {
+        Box::new(future::ok(Vec::new()))
     }
 }
 
